@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MontageServerAPI", "MontageServerAPI\MontageServerAPI.csproj", "{EC0A7025-DB8B-447C-90D4-786FF6E2FEC5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CogAPITesting", "CogAPITesting\CogAPITesting.csproj", "{D4F66E69-2A73-4350-A39F-7ABA87B1B1F7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EC0A7025-DB8B-447C-90D4-786FF6E2FEC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EC0A7025-DB8B-447C-90D4-786FF6E2FEC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EC0A7025-DB8B-447C-90D4-786FF6E2FEC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EC0A7025-DB8B-447C-90D4-786FF6E2FEC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4F66E69-2A73-4350-A39F-7ABA87B1B1F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4F66E69-2A73-4350-A39F-7ABA87B1B1F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4F66E69-2A73-4350-A39F-7ABA87B1B1F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4F66E69-2A73-4350-A39F-7ABA87B1B1F7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B9BFA075-06F8-422E-AD5C-38AC58F46825}
+	EndGlobalSection
+EndGlobal
