@@ -23,15 +23,7 @@ namespace MontageServer.Controllers
             for (int i = 0; i < 10; i++)
                 topics.Add(string.Format(""));
 
-            return Enumerable.Range(1, 5).Select(index => new Response
-            {
-                ReqId = rng.Next(10000, 99999),
-                Topics = new string[] { "topic 1", "topic 2", "topic 3" },
-                Individuals = new string[] { "individual A", "individual B" },
-                Objects = new string[] { "sample object response" },
-                Sentiments = sentiments
-            })
-            .ToArray();
+            return null;
         }
 
         // GET: api/Demo/5

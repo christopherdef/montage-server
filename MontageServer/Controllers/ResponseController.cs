@@ -87,7 +87,7 @@ namespace MontageServer.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public string UploadFile()
+        public Response UploadFile()
         {
             HttpRequest currentRequest = HttpContext.Current.Request;
 
@@ -97,26 +97,109 @@ namespace MontageServer.Controllers
                 file = currentRequest.Files[0];
 
 
+
+            // TODO: probably don't need to do this
+
             // if a file was pending, and its not empty:
-            if (file != null && file.ContentLength > 0)
+            //if (file != null && file.ContentLength > 0)
+            //{
+
+            //    // find path to store file
+            //    string fileName = Path.GetFileName(file.FileName);
+            //    string path = Path.Combine(
+            //        HttpContext.Current.Server.MapPath("~/uploads"),
+            //        fileName
+            //    );
+
+            //    // store file
+            //    if (!File.Exists(path))
+            //        File.Create(path).Close();
+            //    file.SaveAs(path);
+            //}
+
+            //var sentiments = new List<double>();
+            //for (int i = 0; i < 10; i++)
+            //    sentiments.Add(rng.NextDouble());
+
+            var topics = new Dictionary<int, List<string>>();
+            var individuals = new List<string>();
+            var objects = new List<string>();
+            var sentiments = new List<double>();
+            Random rng;
+            using (var sr = new StreamReader(file.InputStream))
             {
+                string content = sr.ReadToEnd();
 
-                // find path to store file
-                string fileName = Path.GetFileName(file.FileName);
-                string path = Path.Combine(
-                    HttpContext.Current.Server.MapPath("~/uploads"),
-                    fileName
-                );
+                // TODO: send this content to the analysis script
+                // TODO: await response from analysis script
 
-                // store file
-                if (!File.Exists(path))
-                    File.Create(path).Close();
-                file.SaveAs(path);
+                /*
+                 *  until ^^ that's complete, return some random garbage
+                 */  
+
+                content = content.Replace('\r', ' ');
+                content = content.Replace('\n', ' ');
+
+                // keep returns consistent for the same string
+                int chash = content.GetHashCode();
+                rng = new Random(chash);
+
+                var words = content.Split(' ');
+
+                int N = words.Length;
+                
+                // add space for the topics
+                int topic_count = rng.Next(2, 10);
+                for (int j = 0; j < topic_count; j++)
+                    topics.Add(j, new List<string>());
+
+                // randomly create a response
+                for (int i = 0; i < N; i++)
+                {
+                    string w = words[i];
+                    if (w.Length == 0)
+                        continue;
+
+                    // "calculate" sentiment
+                    double sentiment = (double)(w.Length) / (double)N;
+                    sentiments.Add(sentiment);
+
+                    // "assign" to a topic
+                    int topic_idx = rng.Next(0, topic_count);
+                    topics[topic_idx].Add(w);
+
+                    // randomly assign words as individuals, objects, or neither
+                    switch (rng.Next(0, 10))
+                    {
+                        // individuals
+                        case 0:
+                            individuals.Add(w);
+                            break;
+
+                        // objects
+                        case 1:
+                            objects.Add(w);
+                            break;
+                        
+                        // neither
+                        default:
+                            break;
+                    }
+                }
             }
 
             // return the file name
             // TODO: return more than just the file name
-            return file != null ? "/uploads/" + file.FileName : null;
+            //return file != null ? "/uploads/" + file.FileName : null;
+            Response response = new Response()
+            {
+                ReqId = rng.Next(10000, 99999),
+                Topics = topics,
+                Individuals = individuals,
+                Objects = objects,
+                Sentiments = sentiments
+            };
+            return response;
         }
 
 
