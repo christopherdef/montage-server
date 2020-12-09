@@ -13,6 +13,8 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using MontageServer.Data;
 using MontageServerAPI;
+//using Microsoft.CognitiveServices.Speech;
+//using Microsoft.CognitiveServices.Speech.Audio;
 
 namespace MontageServer.Controllers
 {
@@ -97,44 +99,65 @@ namespace MontageServer.Controllers
                 file = currentRequest.Files[0];
 
 
-            // TODO/ANDY: add speech2text
-            if (file.ContentType == "Content-Type: audio/mpeg")
-            {
-                // put in speech to text
-                // Response r = new Response();
-                // r.Transcript = 'whatever text';
-                // return r;
-            }
-
-            
-
-            // TODO: probably don't need to do this
-
-            // if a file was pending, and its not empty:
-            //if (file != null && file.ContentLength > 0)
-            //{
-
-            //    // find path to store file
-            //    string fileName = Path.GetFileName(file.FileName);
-            //    string path = Path.Combine(
-            //        HttpContext.Current.Server.MapPath("~/uploads"),
-            //        fileName
-            //    );
-
-            //    // store file
-            //    if (!File.Exists(path))
-            //        File.Create(path).Close();
-            //    file.SaveAs(path);
-            //}
-
-            //var sentiments = new List<double>();
-            //for (int i = 0; i < 10; i++)
-            //    sentiments.Add(rng.NextDouble());
-
+            // initialize empty response
+            Response response;
+            int reqId = file.GetHashCode();
             var topics = new Dictionary<int, List<string>>();
             var individuals = new List<string>();
             var objects = new List<string>();
             var sentiments = new List<double>();
+            var transcript = "";
+
+            response = new Response()
+            {
+                ReqId = reqId,
+                Topics = topics,
+                Individuals = individuals,
+                Objects = objects,
+                Sentiments = sentiments,
+                Transcript = transcript
+            };
+
+            //// TODO: might need different condition to catch audio
+            //// get audio transcripts if file was audio
+            //if (file.ContentType == "Content-Type: audio/mpeg")
+            //{
+            //    // load our subscription
+            //    // TODO: get this hard coded sensitive stuff outta here
+            //    var speechConfig = SpeechConfig.FromSubscription("77f35c60bef24e58bce1a0c0b9f4be65", "eastus");
+
+            //    // load bytestream -> audio stream
+            //    // load audio config from audio stream
+            //    // initialize speech recognizer
+            //    using (var br = new BinaryReader(file.InputStream))
+            //    using (var audioInputStream = AudioInputStream.CreatePushStream()) 
+            //    using (var audioConfig = AudioConfig.FromStreamInput(audioInputStream))
+            //    using (var recognizer = new SpeechRecognizer(speechConfig, audioConfig))
+            //    {
+
+            //        // read through bytes of audio
+            //        byte[] readBytes;
+            //        do
+            //        {
+            //            readBytes = br.ReadBytes(1024);
+            //            audioInputStream.Write(readBytes, readBytes.Length);
+            //        } while (readBytes.Length > 0);
+
+
+            //        // call 
+            //        var recognitionResult = recognizer.RecognizeOnceAsync();
+            //        recognitionResult.Wait();
+
+            //        transcript = recognitionResult.Result.Text;
+
+            //        response.Transcript = transcript;
+
+            //    }
+
+            //    return response;
+            //}
+
+
             Random rng;
             using (var sr = new StreamReader(file.InputStream))
             {
@@ -201,9 +224,9 @@ namespace MontageServer.Controllers
             // return the file name
             // TODO: return more than just the file name
             //return file != null ? "/uploads/" + file.FileName : null;
-            Response response = new Response()
+            response = new Response()
             {
-                ReqId = rng.Next(10000, 99999),
+                ReqId = reqId,
                 Topics = topics,
                 Individuals = individuals,
                 Objects = objects,
