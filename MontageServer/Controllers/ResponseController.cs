@@ -97,6 +97,16 @@ namespace MontageServer.Controllers
                 file = currentRequest.Files[0];
 
 
+            // TODO/ANDY: add speech2text
+            if (file.ContentType == "Content-Type: audio/mpeg")
+            {
+                // put in speech to text
+                // Response r = new Response();
+                // r.Transcript = 'whatever text';
+                // return r;
+            }
+
+            
 
             // TODO: probably don't need to do this
 
@@ -197,7 +207,8 @@ namespace MontageServer.Controllers
                 Topics = topics,
                 Individuals = individuals,
                 Objects = objects,
-                Sentiments = sentiments
+                Sentiments = sentiments,
+                Transcript = ""
             };
             return response;
         }

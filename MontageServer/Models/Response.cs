@@ -32,6 +32,9 @@ namespace MontageServerAPI
         [JsonProperty]
         public IEnumerable<double> Sentiments { get; set; }
 
+        [JsonProperty]
+        public string Transcript { get; set; }
+
     }
 
 
