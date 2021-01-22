@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
-//using Microsoft.CognitiveServices.Speech;
-//using Microsoft.CognitiveServices.Speech.Audio;
+using Microsoft.CognitiveServices.Speech;
+using Microsoft.CognitiveServices.Speech.Audio;
 using MontageServer.Data;
 using MontageServerAPI;
 
@@ -21,6 +21,11 @@ namespace MontageServer.Controllers
     public class ResponseController : ApiController
     {
         private MontageServerContext db = new MontageServerContext();
+
+        // load our subscription
+        // TODO: get this hard coded sensitive stuff outta here
+        private SpeechConfig speechConfig = SpeechConfig.FromSubscription("77f35c60bef24e58bce1a0c0b9f4be65", "eastus");
+
 
         // GET: api/Response
         public IQueryable<Response> GetResponses()
@@ -93,74 +98,54 @@ namespace MontageServer.Controllers
         {
             HttpRequest currentRequest = HttpContext.Current.Request;
 
-            // grab pending file
+            // initialize empty response
+            Response response = new Response();
+            // TODO: make real id counter
+            int reqId = (new Random(currentRequest.Url.GetHashCode())).Next(10000, 99999);
+            response.ReqId = reqId;
+
             HttpPostedFile file = null;
+            // TODO: foreach file in
             if (currentRequest.Files.Count > 0)
                 file = currentRequest.Files[0];
 
             // if no file was sent, return empty response
             if (file is null)
-                return new Response();
-
-            // initialize empty response
-            Response response = new Response();
-            int reqId = file.GetHashCode();
-            response.ReqId = reqId;
-
-            //response = new Response()
-            //{
-            //    ReqId = reqId,
-            //    Topics = topics,
-            //    Individuals = individuals,
-            //    Objects = objects,
-            //    Sentiments = sentiments,
-            //    Transcript = transcript
-            //};
-
-            // TODO: might need different condition to catch audio
-            // get audio transcripts if file was audio
-            if (file.ContentType.StartsWith("audio/"))
-            {
-                response.Transcript = "whatever text";
                 return response;
 
-                //// load our subscription
-                //// TODO: get this hard coded sensitive stuff outta here
-                //var speechConfig = SpeechConfig.FromSubscription("77f35c60bef24e58bce1a0c0b9f4be65", "eastus");
-
-                //// load bytestream -> audio stream
-                //// load audio config from audio stream
-                //// initialize speech recognizer
-                //using (var br = new BinaryReader(file.InputStream))
-                //using (var audioInputStream = AudioInputStream.CreatePushStream())
-                //using (var audioConfig = AudioConfig.FromStreamInput(audioInputStream))
-                //using (var recognizer = new SpeechRecognizer(speechConfig, audioConfig))
-                //{
-
-                //    // read through bytes of audio
-                //    byte[] readBytes;
-                //    do
-                //    {
-                //        readBytes = br.ReadBytes(1024);
-                //        audioInputStream.Write(readBytes, readBytes.Length);
-                //    } while (readBytes.Length > 0);
-
-
-                //    // call 
-                //    var recognitionResult = recognizer.RecognizeOnceAsync();
-                //    recognitionResult.Wait();
-
-                //    transcript = recognitionResult.Result.Text;
-
-                //    response.Transcript = transcript;
-
-                //}
-
+            // if an audio file was sent, return transcript
+            if (file.ContentType.StartsWith("audio/"))
+            {
+                //response.Transcript = "whatever text";
                 //return response;
+
+                // load bytestream -> audio stream
+                // load audio config from audio stream
+                // initialize speech recognizer
+                using (var br = new BinaryReader(file.InputStream))
+                using (var audioInputStream = AudioInputStream.CreatePushStream())
+                using (var audioConfig = AudioConfig.FromStreamInput(audioInputStream))
+                using (var recognizer = new SpeechRecognizer(speechConfig, audioConfig))
+                {
+
+                    // read through bytes of audio
+                    byte[] readBytes;
+                    do
+                    {
+                        readBytes = br.ReadBytes(1024);
+                        audioInputStream.Write(readBytes, readBytes.Length);
+                    } while (readBytes.Length > 0);
+
+                    // call 
+                    var recognitionResult = recognizer.RecognizeOnceAsync();
+                    recognitionResult.Wait();
+
+                    response.Transcript = recognitionResult.Result.Text;
+                    return response;
+                }
             }
 
-
-            Random rng;
+                Random rng;
             var topics = new Dictionary<int, List<string>>();
             var individuals = new List<string>();
             var objects = new List<string>();
