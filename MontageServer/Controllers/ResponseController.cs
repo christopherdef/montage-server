@@ -11,6 +11,8 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Microsoft.CognitiveServices.Speech;
+using Microsoft.CognitiveServices.Speech.Audio;
 using MontageServer.Data;
 using MontageServerAPI;
 
@@ -90,24 +92,39 @@ namespace MontageServer.Controllers
         public Response UploadFile()
         {
             HttpRequest currentRequest = HttpContext.Current.Request;
+            Response r = new Response();
+
+            // TODO: make real id counter
+            Random rng;
+            // keep returns consistent for the same query
+            rng = new Random(currentRequest.QueryString.GetHashCode());
+            int reqId = rng.Next(10000, 99999);
+
 
             // grab pending file
             HttpPostedFile file = null;
+            // TODO: foreach file in
             if (currentRequest.Files.Count > 0)
                 file = currentRequest.Files[0];
 
+            // if no file was sent, return empty response
+            if (file is null)
+                return r;
 
-            // TODO/ANDY: add speech2text
-            if (file.ContentType == "Content-Type: audio/mpeg")
+            // if an audio file was sent, return transcript
+            Console.WriteLine($"Content type: {file.ContentType}");
+            if (file.ContentType.StartsWith("audio/"))
             {
-                // put in speech to text
-                // Response r = new Response();
-                // r.Transcript = 'whatever text';
-                // return r;
+                // TODO: convert arbitrary audio files to .wav
+
+                // TODO: add speech2text to generate real text
+                r.Transcript = "whatever text";
+                return r;
             }
-
             
-
+            // if a text file was sent, return text analysis
+            
+            
             // TODO: probably don't need to do this
 
             // if a file was pending, and its not empty:
@@ -135,7 +152,6 @@ namespace MontageServer.Controllers
             var individuals = new List<string>();
             var objects = new List<string>();
             var sentiments = new List<double>();
-            Random rng;
             using (var sr = new StreamReader(file.InputStream))
             {
                 string content = sr.ReadToEnd();
@@ -150,9 +166,6 @@ namespace MontageServer.Controllers
                 content = content.Replace('\r', ' ');
                 content = content.Replace('\n', ' ');
 
-                // keep returns consistent for the same string
-                int chash = content.GetHashCode();
-                rng = new Random(chash);
 
                 var words = content.Split(' ');
 
@@ -203,7 +216,7 @@ namespace MontageServer.Controllers
             //return file != null ? "/uploads/" + file.FileName : null;
             Response response = new Response()
             {
-                ReqId = rng.Next(10000, 99999),
+                ReqId = reqId,
                 Topics = topics,
                 Individuals = individuals,
                 Objects = objects,

@@ -14,5 +14,12 @@ namespace MontageServer.Controllers
 
             return View();
         }
+
+        public ActionResult APIView()
+        {
+            ViewBag.Title = "API View";
+
+            return View();
+        }
     }
 }

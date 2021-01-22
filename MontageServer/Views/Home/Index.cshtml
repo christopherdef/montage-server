@@ -1,6 +1,13 @@
-﻿<div class="jumbotron">
-    <h1>Montage</h1>
-</div>
+﻿<style>
+    .logo {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
+    }
+</style>
 <div class="row">
-    <p>Query our API at <a href="">montageapp.azurewebsites.net/api/</a></p>
-</div>
+    <img src="~/Montage_Logo.png" alt="Montage Logo" class="logo" width="500px" />
+    <p style="text-align:center">Query our API at @Html.ActionLink("montageapp.azurewebsites.net/Home/APIView", "APIView", "Home", new { area = "" }, null)</p>
+</div>  
+
+

@@ -1,0 +1,58 @@
+﻿
+@{
+    ViewBag.Title = "APIView";
+}
+<h2>API View</h2>
+
+<table class="table" style="background-color:white">
+    <thead>
+        <tr>
+            <th>
+                Name
+            </th>
+            <th>
+                Description
+            </th>
+            <th>
+                Return
+            </th>
+            <th>
+                HTTP Request
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                File Upload
+            </td>
+            <td>
+                Upload text or audio (coming soon!) to the Montage server
+            </td>
+            <td>
+                {
+                <br />
+                reqId : &lt;int&gt;,
+                <br />
+                topics : {&lt;int&gt;, &lt; [&lt;str&gt;] &gt;},
+                <br />
+                individuals : [&lt;str&gt;],
+                <br />
+                objects : [&lt;str&gt;],
+                <br />
+                sentiments : [&lt;double&gt;],
+                <br />
+                transcript : &lt;str&gt;
+                <br />
+                }
+            </td>
+            <td>
+                POST https://montageapp.azurewebsites.net/api/response
+                <br />
+                file1=LOCAL_PATH_TO_FILE
+
+            </td>
+        </tr>
+    </tbody>
+</table>
+
