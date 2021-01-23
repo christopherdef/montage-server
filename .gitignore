@@ -576,3 +576,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+/TestingText2Speech

@@ -94,7 +94,8 @@ namespace MontageServer.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpPost]
-        public Response UploadFile()
+        [ResponseType(typeof(Response))]
+        public async Task<Response> UploadFile()
         {
             HttpRequest currentRequest = HttpContext.Current.Request;
 
@@ -105,7 +106,7 @@ namespace MontageServer.Controllers
             response.ReqId = reqId;
 
             HttpPostedFile file = null;
-            // TODO: foreach file in
+            // TODO: foreach file in request (get HandleAudio and HandleText fxns)
             if (currentRequest.Files.Count > 0)
                 file = currentRequest.Files[0];
 
@@ -119,33 +120,40 @@ namespace MontageServer.Controllers
                 //response.Transcript = "whatever text";
                 //return response;
 
+                var audioFormat128 = AudioStreamFormat.GetWaveFormatPCM(8000, 16, 1);
+                var audioFormat256 = AudioStreamFormat.GetWaveFormatPCM(16000, 16, 1);
+
                 // load bytestream -> audio stream
                 // load audio config from audio stream
                 // initialize speech recognizer
                 using (var br = new BinaryReader(file.InputStream))
-                using (var audioInputStream = AudioInputStream.CreatePushStream())
+                using (var audioInputStream = AudioInputStream.CreatePushStream(audioFormat128))
                 using (var audioConfig = AudioConfig.FromStreamInput(audioInputStream))
                 using (var recognizer = new SpeechRecognizer(speechConfig, audioConfig))
                 {
+                    int nbytes = file.ContentLength;
+                    var buff = new List<byte>();
 
                     // read through bytes of audio
                     byte[] readBytes;
                     do
                     {
                         readBytes = br.ReadBytes(1024);
+                        buff.AddRange(readBytes);
                         audioInputStream.Write(readBytes, readBytes.Length);
+
                     } while (readBytes.Length > 0);
 
                     // call 
-                    var recognitionResult = recognizer.RecognizeOnceAsync();
-                    recognitionResult.Wait();
-
-                    response.Transcript = recognitionResult.Result.Text;
+                    // TODO: start async recognition
+                    //var recognitionResult = recognizer.StartContinuousRecognitionAsync();
+                    var recognitionResult = await recognizer.RecognizeOnceAsync();
+                    response.Transcript = recognitionResult.Text;
                     return response;
                 }
             }
 
-                Random rng;
+            Random rng;
             var topics = new Dictionary<int, List<string>>();
             var individuals = new List<string>();
             var objects = new List<string>();
