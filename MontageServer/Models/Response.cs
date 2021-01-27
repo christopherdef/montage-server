@@ -18,10 +18,10 @@ namespace MontageServerAPI
     {
         [Key]
         [JsonProperty]
-        public int ReqId { get; set; }
+        public string ReqId { get; set; }
 
         [JsonProperty]
-        public Dictionary<int, List<string>> Topics { get; set; }
+        public IEnumerable<IEnumerable<int>> Topics { get; set; }
 
         [JsonProperty]
         public IEnumerable<string> Individuals { get; set; }

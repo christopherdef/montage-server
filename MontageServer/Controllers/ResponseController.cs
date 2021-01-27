@@ -22,11 +22,7 @@ namespace MontageServer.Controllers
     {
         private MontageServerContext db = new MontageServerContext();
 
-        // load our subscription
-        // TODO: get this hard coded sensitive stuff outta here
-        private SpeechConfig speechConfig = SpeechConfig.FromSubscription("77f35c60bef24e58bce1a0c0b9f4be65", "eastus");
-
-
+       
         // GET: api/Response
         public IQueryable<Response> GetResponses()
         {
@@ -55,7 +51,7 @@ namespace MontageServer.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (id != response.ReqId)
+            if (id.ToString().Equals(response.ReqId))
             {
                 return BadRequest();
             }
@@ -101,8 +97,9 @@ namespace MontageServer.Controllers
 
             // initialize empty response
             Response response = new Response();
+
             // TODO: make real id counter
-            int reqId = (new Random(currentRequest.Url.GetHashCode())).Next(10000, 99999);
+            string reqId = (new Random(currentRequest.Url.GetHashCode())).Next(10000, 99999).ToString();
             response.ReqId = reqId;
 
             HttpPostedFile file = null;
@@ -117,122 +114,13 @@ namespace MontageServer.Controllers
             // if an audio file was sent, return transcript
             if (file.ContentType.StartsWith("audio/"))
             {
-                //response.Transcript = "whatever text";
-                //return response;
-
-                var audioFormat128 = AudioStreamFormat.GetWaveFormatPCM(8000, 16, 1);
-                var audioFormat256 = AudioStreamFormat.GetWaveFormatPCM(16000, 16, 1);
-
-                // load bytestream -> audio stream
-                // load audio config from audio stream
-                // initialize speech recognizer
-                using (var br = new BinaryReader(file.InputStream))
-                using (var audioInputStream = AudioInputStream.CreatePushStream(audioFormat128))
-                using (var audioConfig = AudioConfig.FromStreamInput(audioInputStream))
-                using (var recognizer = new SpeechRecognizer(speechConfig, audioConfig))
-                {
-                    int nbytes = file.ContentLength;
-                    var buff = new List<byte>();
-
-                    // read through bytes of audio
-                    byte[] readBytes;
-                    do
-                    {
-                        readBytes = br.ReadBytes(1024);
-                        buff.AddRange(readBytes);
-                        audioInputStream.Write(readBytes, readBytes.Length);
-
-                    } while (readBytes.Length > 0);
-
-                    // call 
-                    // TODO: start async recognition
-                    //var recognitionResult = recognizer.StartContinuousRecognitionAsync();
-                    var recognitionResult = await recognizer.RecognizeOnceAsync();
-                    response.Transcript = recognitionResult.Text;
-                    return response;
-                }
-            }
-
-            Random rng;
-            var topics = new Dictionary<int, List<string>>();
-            var individuals = new List<string>();
-            var objects = new List<string>();
-            var sentiments = new List<double>();
-            using (var sr = new StreamReader(file.InputStream))
-            {
-                string content = sr.ReadToEnd();
-
-                // TODO: send this content to the analysis script
-                // TODO: await response from analysis script
-
-                /*
-                 *  until ^^ that's complete, return some random garbage
-                 */  
-
-                content = content.Replace('\r', ' ');
-                content = content.Replace('\n', ' ');
-
-                // keep returns consistent for the same string
-                int chash = content.GetHashCode();
-                rng = new Random(chash);
-
-                var words = content.Split(' ');
-
-                int N = words.Length;
+                return await Task.Run(() => AnalysisController.AnalyzeAudio(ref response, file));
                 
-                // add space for the topics
-                int topic_count = rng.Next(2, 10);
-                for (int j = 0; j < topic_count; j++)
-                    topics.Add(j, new List<string>());
-
-                // randomly create a response
-                for (int i = 0; i < N; i++)
-                {
-                    string w = words[i];
-                    if (w.Length == 0)
-                        continue;
-
-                    // "calculate" sentiment
-                    double sentiment = (double)(w.Length) / (double)N;
-                    sentiments.Add(sentiment);
-
-                    // "assign" to a topic
-                    int topic_idx = rng.Next(0, topic_count);
-                    topics[topic_idx].Add(w);
-
-                    // randomly assign words as individuals, objects, or neither
-                    switch (rng.Next(0, 10))
-                    {
-                        // individuals
-                        case 0:
-                            individuals.Add(w);
-                            break;
-
-                        // objects
-                        case 1:
-                            objects.Add(w);
-                            break;
-                        
-                        // neither
-                        default:
-                            break;
-                    }
-                }
             }
-
-            // return the file name
-            // TODO: return more than just the file name
-            //return file != null ? "/uploads/" + file.FileName : null;
-            response = new Response()
+            else
             {
-                ReqId = reqId,
-                Topics = topics,
-                Individuals = individuals,
-                Objects = objects,
-                Sentiments = sentiments,
-                Transcript = ""
-            };
-            return response;
+                return await Task.Run(() => AnalysisController.AnalyzeTranscript(ref response, file));
+            }
         }
 
 
@@ -282,7 +170,7 @@ namespace MontageServer.Controllers
 
         private bool ResponseExists(int id)
         {
-            return db.Responses.Count(e => e.ReqId == id) > 0;
+            return db.Responses.Count(e => e.ReqId.Equals(id.ToString())) > 0;
         }
     }
 }
