@@ -17,8 +17,9 @@ namespace MontageServer.Controllers
 {
     public class AnalysisController : Controller
     {
-        private static string PYTHON_PATH = @"C:\Users\chris\anaconda3\python.exe";
-        private static string SCRIPT_PATH = @"C:\Users\chris\source\repos\montage-server\MontageServer\PyScripts\analyze_transcript.py";
+        private static string PYTHON_PATH = @"..\Python38\python.exe";
+        private static string SCRIPT_PATH = @"PyScripts\analyze_transcript.py";
+        private static string BASE_DIR = AppDomain.CurrentDomain.BaseDirectory;
 
         // load our subscription
         // TODO: get this hard coded sensitive stuff outta here
@@ -170,6 +171,8 @@ namespace MontageServer.Controllers
 
         private static string RunCmd(string cmd, string args)
         {
+            cmd = BASE_DIR + cmd;
+            args = BASE_DIR + args;
             ProcessStartInfo start = new ProcessStartInfo();
             start.FileName = cmd; //cmd is full path to python.exe
             start.Arguments = args; //args is path to .py file and any cmd line args
