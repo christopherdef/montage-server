@@ -114,8 +114,9 @@ namespace MontageServer.Controllers
             // if an audio file was sent, return transcript
             if (file.ContentType.StartsWith("audio/"))
             {
-                return await Task.Run(() => AnalysisController.AnalyzeAudio(ref response, file));
-                
+                // TODO: local workaround pending azure resolution
+                //return await Task.Run(() => AnalysisController.TranscribeAudio(ref response, file));
+                return await Task.Run(() => AnalysisController.TranscribeAudioLocal(ref response, file));
             }
             else
             {

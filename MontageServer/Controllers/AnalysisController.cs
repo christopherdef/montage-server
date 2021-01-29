@@ -18,7 +18,8 @@ namespace MontageServer.Controllers
     public class AnalysisController : Controller
     {
         private static string PYTHON_PATH = @"..\Python38\python.exe";
-        private static string SCRIPT_PATH = @"PyScripts\analyze_transcript.py";
+        private static string TRANSCRIPT_SCRIPT_PATH = @"PyScripts\analyze_transcript.py";
+        private static string AUDIO_SCRIPT_PATH = @"PyScripts\transcribe_audio.py";
         private static string BASE_DIR = AppDomain.CurrentDomain.BaseDirectory;
 
         // load our subscription
@@ -38,7 +39,28 @@ namespace MontageServer.Controllers
             string transFileFn = Path.GetTempFileName();
             transcriptFile.SaveAs(transFileFn);
             
-            string scriptOutput = RunCmd(PYTHON_PATH, $"{SCRIPT_PATH} {response.ReqId} {transFileFn}");
+            // run analysis on saved transcript file
+            string scriptOutput = RunCmd(PYTHON_PATH, $"{TRANSCRIPT_SCRIPT_PATH} {response.ReqId} {transFileFn}");
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+
+            // deserialize json response from script
+            response = JsonSerializer.Deserialize<Response>(scriptOutput, options);
+
+            return response;
+        }
+
+        public static Response TranscribeAudioLocal(ref Response response, HttpPostedFile audioFile)
+        {
+            // save audio as file with unique name
+            string audioFileFn = Path.GetTempFileName();
+            audioFile.SaveAs(audioFileFn);
+
+            // transcribe saved audio file
+            string scriptOutput = RunCmd(PYTHON_PATH, $"{AUDIO_SCRIPT_PATH} {response.ReqId} {audioFileFn}");
 
             var options = new JsonSerializerOptions
             {
@@ -50,7 +72,7 @@ namespace MontageServer.Controllers
             return response;
         }
 
-        public static Response AnalyzeAudio(ref Response response, HttpPostedFile audioFile)
+        public static Response TranscribeAudio(ref Response response, HttpPostedFile audioFile)
         {
             var audioFormat128 = AudioStreamFormat.GetWaveFormatPCM(8000, 16, 1);
             var audioFormat256 = AudioStreamFormat.GetWaveFormatPCM(16000, 16, 1);
