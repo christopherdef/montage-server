@@ -1,6 +1,5 @@
 ﻿using Microsoft.CognitiveServices.Speech;
 using Microsoft.CognitiveServices.Speech.Audio;
-using MontageServerAPI;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -9,70 +8,85 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using System.Web.Mvc;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using MontageServer.Data;
+using Microsoft.AspNetCore.Mvc;
+using MontageServer.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace MontageServer.Controllers
 {
-    public class AnalysisController : Controller
+    public class AnalysisController 
     {
         private static string PYTHON_PATH = @"..\Python38\python.exe";
         private static string TRANSCRIPT_SCRIPT_PATH = @"PyScripts\analyze_transcript.py";
         private static string AUDIO_SCRIPT_PATH = @"PyScripts\transcribe_audio.py";
-        private static string BASE_DIR = AppDomain.CurrentDomain.BaseDirectory;
+        private static string BASE_DIR = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\");
 
         // load our subscription
         // TODO: get this hard coded sensitive stuff outta here
         private static SpeechConfig SPEECH_CONFIG = SpeechConfig.FromSubscription("77f35c60bef24e58bce1a0c0b9f4be65", "eastus");
 
-
-        // GET: Analysis
-        public ActionResult Index()
+        /// <summary>
+        /// Given an IFormFile, save to disk at the specified path
+        /// </summary>
+        private static void SaveFormFile(IFormFile formFile, string pt)
         {
-            return View();
+            using (StreamWriter sw = File.CreateText(pt))
+            using (StreamReader sr = new StreamReader(formFile.OpenReadStream()))
+                sw.Write(sr.ReadToEnd());
         }
 
-        public static Response AnalyzeTranscript(ref Response response, HttpPostedFile transcriptFile)
+        /// <summary>
+        /// Run Python analysis script on the given transcriptFile
+        /// </summary>
+        public static AudioResponse AnalyzeTranscript(ref AudioResponse AudioResponse, IFormFile transcriptFile)
         {
             // save transcript as file with unique name
             string transFileFn = Path.GetTempFileName();
-            transcriptFile.SaveAs(transFileFn);
-            
+            SaveFormFile(transcriptFile, transFileFn);
+
             // run analysis on saved transcript file
-            string scriptOutput = RunCmd(PYTHON_PATH, $"{TRANSCRIPT_SCRIPT_PATH} {response.ReqId} {transFileFn}");
+            string scriptOutput = RunCmd(PYTHON_PATH, $"{TRANSCRIPT_SCRIPT_PATH} {AudioResponse.ReqId} {transFileFn}");
 
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
             };
 
-            // deserialize json response from script
-            response = JsonSerializer.Deserialize<Response>(scriptOutput, options);
+            // deserialize json AudioResponse from script
+            AudioResponse = JsonSerializer.Deserialize<AudioResponse>(scriptOutput, options);
 
-            return response;
+            return AudioResponse;
         }
 
-        public static Response TranscribeAudioLocal(ref Response response, HttpPostedFile audioFile)
+        /// <summary>
+        /// Local transcription of the given audioFile with Sphinx
+        /// </summary>
+        public static AudioResponse TranscribeAudioLocal(ref AudioResponse AudioResponse, IFormFile audioFile)
         {
             // save audio as file with unique name
             string audioFileFn = Path.GetTempFileName();
-            audioFile.SaveAs(audioFileFn);
+            SaveFormFile(audioFile, audioFileFn);
 
             // transcribe saved audio file
-            string scriptOutput = RunCmd(PYTHON_PATH, $"{AUDIO_SCRIPT_PATH} {response.ReqId} {audioFileFn}");
+            string scriptOutput = RunCmd(PYTHON_PATH, $"{AUDIO_SCRIPT_PATH} {AudioResponse.ReqId} {audioFileFn}");
 
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
             };
 
-            response = JsonSerializer.Deserialize<Response>(scriptOutput, options);
+            AudioResponse = JsonSerializer.Deserialize<AudioResponse>(scriptOutput, options);
 
-            return response;
+            return AudioResponse;
         }
 
-        public static Response TranscribeAudio(ref Response response, HttpPostedFile audioFile)
+        /// <summary>
+        /// Remote audio transcription of the given audioFile with CognitiveServices
+        /// </summary>
+        public static AudioResponse TranscribeAudio(ref AudioResponse AudioResponse, IFormFile audioFile)
         {
             var audioFormat128 = AudioStreamFormat.GetWaveFormatPCM(8000, 16, 1);
             var audioFormat256 = AudioStreamFormat.GetWaveFormatPCM(16000, 16, 1);
@@ -80,12 +94,12 @@ namespace MontageServer.Controllers
             // load bytestream -> audio stream
             // load audio config from audio stream
             // initialize speech recognizer
-            using (var br = new BinaryReader(audioFile.InputStream))
+            using (var br = new BinaryReader(audioFile.OpenReadStream()))
             using (var audioInputStream = AudioInputStream.CreatePushStream(audioFormat128))
             using (var audioConfig = AudioConfig.FromStreamInput(audioInputStream))
             using (var recognizer = new SpeechRecognizer(SPEECH_CONFIG, audioConfig))
             {
-                int nbytes = audioFile.ContentLength;
+                long nbytes = audioFile.Length;
                 var buff = new List<byte>();
 
                 // read through bytes of audio
@@ -103,27 +117,27 @@ namespace MontageServer.Controllers
                 //var recognitionResult = recognizer.StartContinuousRecognitionAsync();
                 var recognitionResult = recognizer.RecognizeOnceAsync();
                 recognitionResult.Wait();
-                response.Transcript = recognitionResult.Result.Text;
+                AudioResponse.Transcript = recognitionResult.Result.Text;
 
                 // TODO: begin analysis on transcript
 
-                return response;
+                return AudioResponse;
             }
         }
 
-        public Response AnalyzeTranscriptDummy(ref Response response, HttpPostedFile transcriptFile)
+        public AudioResponse AnalyzeTranscriptDummy(ref AudioResponse AudioResponse, IFormFile transcriptFile)
         {
             Random rng;
             var topics = new List<List<int>>();
             var individuals = new List<string>();
             var objects = new List<string>();
             var sentiments = new List<double>();
-            using (var sr = new StreamReader(transcriptFile.InputStream))
+            using (var sr = new StreamReader(transcriptFile.OpenReadStream()))
             {
                 string content = sr.ReadToEnd();
 
                 // TODO: send this content to the analysis script
-                // TODO: await response from analysis script
+                // TODO: await AudioResponse from analysis script
 
                 /*
                  *  until ^^ that's complete, return some random garbage
@@ -145,7 +159,7 @@ namespace MontageServer.Controllers
                 for (int j = 0; j < topic_count; j++)
                     topics.Append(new List<int>());
 
-                // randomly create a response
+                // randomly create a AudioResponse
                 for (int i = 0; i < N; i++)
                 {
                     string w = words[i];
@@ -183,14 +197,18 @@ namespace MontageServer.Controllers
             // return the file name
             // TODO: return more than just the file name
             //return file != null ? "/uploads/" + file.FileName : null;
-            response.Topics = topics;
-            response.Individuals = individuals;
-            response.Objects = objects;
-            response.Sentiments = sentiments;
-            response.Transcript = "";
-            return response;
+            AudioResponse.Topics = topics;
+            AudioResponse.Individuals = individuals;
+            AudioResponse.Objects = objects;
+            AudioResponse.Sentiments = sentiments;
+            AudioResponse.Transcript = "";
+            return AudioResponse;
         }
 
+        /// <summary>
+        /// Runs the given cmd with the specified args as a separate shell process
+        /// Awaits the process finishing before returning, *can lock*
+        /// </summary>
         private static string RunCmd(string cmd, string args)
         {
             cmd = BASE_DIR + cmd;
