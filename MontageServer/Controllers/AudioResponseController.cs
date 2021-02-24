@@ -56,7 +56,10 @@ namespace MontageServer.Controllers
                {
                    // if an audio file was sent, return transcript
                    if (file.ContentType.StartsWith("audio/"))
-                       AnalysisController.TranscribeAudio(ref response, file);
+                   {
+                       //AnalysisController.TranscribeAudio(ref response, file);
+                       AnalysisController.AnalyzeAudio(ref response, file);
+                   }
                    else
                        AnalysisController.AnalyzeTranscript(ref response, file);
                });
