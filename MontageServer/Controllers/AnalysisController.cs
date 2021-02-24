@@ -8,16 +8,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using MontageServer.Data;
 using Microsoft.AspNetCore.Mvc;
 using MontageServer.Models;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace MontageServer.Controllers
 {
-    public class AnalysisController 
+    public class AnalysisController
     {
         private static string PYTHON_PATH = @"..\Python38\python.exe";
         private static string TRANSCRIPT_SCRIPT_PATH = @"PyScripts\analyze_transcript.py";
@@ -38,55 +37,57 @@ namespace MontageServer.Controllers
                 sw.Write(sr.ReadToEnd());
         }
 
+        private static AudioResponse DeserializeResponse(string scriptOutput)
+        {
+            var options = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+
+            // deserialize json AudioResponse from script
+            return JsonConvert.DeserializeObject<AudioResponse>(scriptOutput, options);
+        }
+
         /// <summary>
         /// Run Python analysis script on the given transcriptFile
         /// </summary>
-        public static AudioResponse AnalyzeTranscript(ref AudioResponse AudioResponse, IFormFile transcriptFile)
+        public static AudioResponse AnalyzeTranscript(ref AudioResponse audioResponse, IFormFile transcriptFile)
         {
             // save transcript as file with unique name
             string transFileFn = Path.GetTempFileName();
             SaveFormFile(transcriptFile, transFileFn);
 
             // run analysis on saved transcript file
-            string scriptOutput = RunCmd(PYTHON_PATH, $"{TRANSCRIPT_SCRIPT_PATH} {AudioResponse.ReqId} {transFileFn}");
+            string scriptOutput = RunCmd(PYTHON_PATH, $"{TRANSCRIPT_SCRIPT_PATH} {audioResponse.ReqId} {transFileFn}");
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-            };
+            audioResponse = DeserializeResponse(scriptOutput);
 
-            // deserialize json AudioResponse from script
-            AudioResponse = JsonSerializer.Deserialize<AudioResponse>(scriptOutput, options);
+            //audioResponse = JsonSerializer.Deserialize<AudioResponse>(scriptOutput, options);
 
-            return AudioResponse;
+            return audioResponse;
         }
 
         /// <summary>
         /// Local transcription of the given audioFile with Sphinx
         /// </summary>
-        public static AudioResponse TranscribeAudioLocal(ref AudioResponse AudioResponse, IFormFile audioFile)
+        public static AudioResponse TranscribeAudioLocal(ref AudioResponse audioResponse, IFormFile audioFile)
         {
             // save audio as file with unique name
             string audioFileFn = Path.GetTempFileName();
             SaveFormFile(audioFile, audioFileFn);
 
             // transcribe saved audio file
-            string scriptOutput = RunCmd(PYTHON_PATH, $"{AUDIO_SCRIPT_PATH} {AudioResponse.ReqId} {audioFileFn}");
+            string scriptOutput = RunCmd(PYTHON_PATH, $"{AUDIO_SCRIPT_PATH} {audioResponse.ReqId} {audioFileFn}");
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-            };
+            audioResponse = DeserializeResponse(scriptOutput);
 
-            AudioResponse = JsonSerializer.Deserialize<AudioResponse>(scriptOutput, options);
-
-            return AudioResponse;
+            return audioResponse;
         }
 
         /// <summary>
         /// Remote audio transcription of the given audioFile with CognitiveServices
         /// </summary>
-        public static AudioResponse TranscribeAudio(ref AudioResponse AudioResponse, IFormFile audioFile)
+        public static AudioResponse TranscribeAudio(ref AudioResponse audioResponse, IFormFile audioFile)
         {
             var audioFormat128 = AudioStreamFormat.GetWaveFormatPCM(8000, 16, 1);
             var audioFormat256 = AudioStreamFormat.GetWaveFormatPCM(16000, 16, 1);
@@ -117,93 +118,106 @@ namespace MontageServer.Controllers
                 //var recognitionResult = recognizer.StartContinuousRecognitionAsync();
                 var recognitionResult = recognizer.RecognizeOnceAsync();
                 recognitionResult.Wait();
-                AudioResponse.Transcript = recognitionResult.Result.Text;
+                audioResponse.Transcript = recognitionResult.Result.Text;
 
-                // TODO: begin analysis on transcript
-
-                return AudioResponse;
-            }
-        }
-
-        public AudioResponse AnalyzeTranscriptDummy(ref AudioResponse AudioResponse, IFormFile transcriptFile)
-        {
-            Random rng;
-            var topics = new List<List<int>>();
-            var individuals = new List<string>();
-            var objects = new List<string>();
-            var sentiments = new List<double>();
-            using (var sr = new StreamReader(transcriptFile.OpenReadStream()))
-            {
-                string content = sr.ReadToEnd();
-
-                // TODO: send this content to the analysis script
-                // TODO: await AudioResponse from analysis script
-
-                /*
-                 *  until ^^ that's complete, return some random garbage
-                 */
-
-                content = content.Replace('\r', ' ');
-                content = content.Replace('\n', ' ');
-
-                // keep returns consistent for the same string
-                int chash = content.GetHashCode();
-                rng = new Random(chash);
-
-                var words = content.Split(' ');
-
-                int N = words.Length;
-
-                // add space for the topics
-                int topic_count = rng.Next(2, 10);
-                for (int j = 0; j < topic_count; j++)
-                    topics.Append(new List<int>());
-
-                // randomly create a AudioResponse
-                for (int i = 0; i < N; i++)
+                // TODO: what if two topics have == likelihood
+                var t = new Dictionary<string, Topic>()
                 {
-                    string w = words[i];
-                    if (w.Length == 0)
-                        continue;
-
-                    // "calculate" sentiment
-                    double sentiment = (double)(w.Length) / (double)N;
-                    sentiments.Add(sentiment);
-
-                    // "assign" to a topic
-                    int topic_idx = rng.Next(0, topic_count);
-                    topics[topic_idx].Add(rng.Next(10, 100));
-
-                    // randomly assign words as individuals, objects, or neither
-                    switch (rng.Next(0, 10))
-                    {
-                        // individuals
-                        case 0:
-                            individuals.Add(w);
-                            break;
-
-                        // objects
-                        case 1:
-                            objects.Add(w);
-                            break;
-
-                        // neither
-                        default:
-                            break;
-                    }
-                }
+                    {"0.103408", new Topic { Members = new List<string>() {"honey", "life", "right", "shut", "stop" } } },
+                    { "0.10340",new Topic {   Members = new List<string>() {"think", "get", "know", "barry", "go"}}},
+                    {"0.0932616",new Topic {  Members = new List<string>() {"go", "get", "honey", "know", "think"}}},
+                    {"0.104334",new Topic {  Members = new List<string>() {"human", "buzz", "check", "rain", "week"}}},
+                    {"0.077072",new Topic {  Members = new List<string>() {"yellow", "black", "barry", "get", "little"}}},
+                    {"0.146904",new Topic {  Members = new List<string>() {"barry", "think", "talk", "life", "honey"}}},
+                    {"0.0936587",new Topic {  Members = new List<string>() {"time", "human", "talk", "think", "benson"}}},
+                    {"0.0905928",new Topic {  Members = new List<string>() {"like", "know", "get", "oh", "little"}}},
+                    {"0.0911442",new Topic {  Members = new List<string>() {"know", "honey", "like", "yeah", "pollen"}}},
+                    {"0.12059",new Topic { Members = new List<string>() {"flower", "get", "know", "barry", "sorry"}} }
+                };
+                audioResponse.Topics = t;
+                return audioResponse;
             }
-
-            // return the file name
-            // TODO: return more than just the file name
-            //return file != null ? "/uploads/" + file.FileName : null;
-            AudioResponse.Topics = topics;
-            AudioResponse.Individuals = individuals;
-            AudioResponse.Objects = objects;
-            AudioResponse.Sentiments = sentiments;
-            AudioResponse.Transcript = "";
-            return AudioResponse;
         }
+
+        //public AudioResponse AnalyzeTranscriptDummy(ref AudioResponse audioResponse, IFormFile transcriptFile)
+        //{
+        //    Random rng;
+        //    var topics = new List<List<int>>();
+        //    var individuals = new List<string>();
+        //    var objects = new List<string>();
+        //    var sentiments = new List<double>();
+        //    using (var sr = new StreamReader(transcriptFile.OpenReadStream()))
+        //    {
+        //        string content = sr.ReadToEnd();
+
+        //        // TODO: send this content to the analysis script
+        //        // TODO: await AudioResponse from analysis script
+
+        //        /*
+        //         *  until ^^ that's complete, return some random garbage
+        //         */
+
+        //        content = content.Replace('\r', ' ');
+        //        content = content.Replace('\n', ' ');
+
+        //        // keep returns consistent for the same string
+        //        int chash = content.GetHashCode();
+        //        rng = new Random(chash);
+
+        //        var words = content.Split(' ');
+
+        //        int N = words.Length;
+
+        //        // add space for the topics
+        //        int topic_count = rng.Next(2, 10);
+        //        for (int j = 0; j < topic_count; j++)
+        //            topics.Append(new List<int>());
+
+        //        // randomly create a AudioResponse
+        //        for (int i = 0; i < N; i++)
+        //        {
+        //            string w = words[i];
+        //            if (w.Length == 0)
+        //                continue;
+
+        //            // "calculate" sentiment
+        //            double sentiment = (double)(w.Length) / (double)N;
+        //            sentiments.Add(sentiment);
+
+        //            // "assign" to a topic
+        //            int topic_idx = rng.Next(0, topic_count);
+        //            topics[topic_idx].Add(rng.Next(10, 100));
+
+        //            // randomly assign words as individuals, objects, or neither
+        //            switch (rng.Next(0, 10))
+        //            {
+        //                // individuals
+        //                case 0:
+        //                    individuals.Add(w);
+        //                    break;
+
+        //                // objects
+        //                case 1:
+        //                    objects.Add(w);
+        //                    break;
+
+        //                // neither
+        //                default:
+        //                    break;
+        //            }
+        //        }
+        //    }
+
+        //    // return the file name
+        //    // TODO: return more than just the file name
+        //    //return file != null ? "/uploads/" + file.FileName : null;
+        //    audioResponse.Topics = topics;
+        //    audioResponse.Individuals = individuals;
+        //    audioResponse.Objects = objects;
+        //    audioResponse.Sentiments = sentiments;
+        //    audioResponse.Transcript = "";
+        //    return audioResponse;
+        //}
 
         /// <summary>
         /// Runs the given cmd with the specified args as a separate shell process

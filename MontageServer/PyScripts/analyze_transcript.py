@@ -35,6 +35,9 @@ def analyze_transcript(response, transcript_pt):
 
     return response
 
+def get_topics(transcript):
+    pass
+
 def main(_id, transcript_pt):
     '''
     Driver transcript analysis

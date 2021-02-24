@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -22,7 +23,7 @@ namespace MontageServer.Models
 
         [JsonProperty]
         [NotMapped]
-        public IEnumerable<IEnumerable<int>> Topics { get; set; }
+        public IDictionary<string, Topic> Topics { get; set; }
 
         [JsonProperty]
         [NotMapped]
@@ -38,5 +39,22 @@ namespace MontageServer.Models
 
         [JsonProperty]
         public string Transcript { get; set; }
+    }
+
+    public class Topic : IEnumerable<string>
+    {
+
+        public IEnumerable<string> Members { get; set; }
+
+        public IEnumerator<string> GetEnumerator()
+        {
+            return Members.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable)Members).GetEnumerator();
+        }
+
     }
 }
