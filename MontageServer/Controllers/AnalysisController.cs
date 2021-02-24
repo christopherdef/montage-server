@@ -48,6 +48,20 @@ namespace MontageServer.Controllers
             return JsonConvert.DeserializeObject<AudioResponse>(scriptOutput, options);
         }
 
+        public static AudioResponse AnalyzeAudio(ref AudioResponse response, IFormFile audioFile)
+        {
+            TranscribeAudio(ref response, audioFile);
+
+            string transFileFn = Path.GetTempFileName();
+            using (StreamWriter sw = File.CreateText(transFileFn))
+                sw.Write(response.Transcript);
+
+            FormFile transcriptFile = new FormFile(File.OpenRead(transFileFn), 0, response.Transcript.Length, audioFile.Name, transFileFn);
+            AnalyzeTranscript(ref response, transcriptFile);
+                
+            return response;
+        }
+
         /// <summary>
         /// Run Python analysis script on the given transcriptFile
         /// </summary>
@@ -120,21 +134,6 @@ namespace MontageServer.Controllers
                 recognitionResult.Wait();
                 audioResponse.Transcript = recognitionResult.Result.Text;
 
-                // TODO: what if two topics have == likelihood
-                var t = new Dictionary<string, Topic>()
-                {
-                    {"0.103408", new Topic { Members = new List<string>() {"honey", "life", "right", "shut", "stop" } } },
-                    { "0.10340",new Topic {   Members = new List<string>() {"think", "get", "know", "barry", "go"}}},
-                    {"0.0932616",new Topic {  Members = new List<string>() {"go", "get", "honey", "know", "think"}}},
-                    {"0.104334",new Topic {  Members = new List<string>() {"human", "buzz", "check", "rain", "week"}}},
-                    {"0.077072",new Topic {  Members = new List<string>() {"yellow", "black", "barry", "get", "little"}}},
-                    {"0.146904",new Topic {  Members = new List<string>() {"barry", "think", "talk", "life", "honey"}}},
-                    {"0.0936587",new Topic {  Members = new List<string>() {"time", "human", "talk", "think", "benson"}}},
-                    {"0.0905928",new Topic {  Members = new List<string>() {"like", "know", "get", "oh", "little"}}},
-                    {"0.0911442",new Topic {  Members = new List<string>() {"know", "honey", "like", "yeah", "pollen"}}},
-                    {"0.12059",new Topic { Members = new List<string>() {"flower", "get", "know", "barry", "sorry"}} }
-                };
-                audioResponse.Topics = t;
                 return audioResponse;
             }
         }
@@ -239,6 +238,9 @@ namespace MontageServer.Controllers
             {
                 string r = reader.ReadToEnd().Trim();
                 string err = errReader.ReadToEnd();
+
+                if (err.Length > 0)
+                    r += "\n" + err;    
                 return r;
             }
         }

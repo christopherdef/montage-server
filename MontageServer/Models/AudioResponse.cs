@@ -23,7 +23,7 @@ namespace MontageServer.Models
 
         [JsonProperty]
         [NotMapped]
-        public IDictionary<string, Topic> Topics { get; set; }
+        public IDictionary<string, IEnumerable<string>> Topics { get; set; }
 
         [JsonProperty]
         [NotMapped]
