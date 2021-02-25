@@ -40,21 +40,4 @@ namespace MontageServer.Models
         [JsonProperty]
         public string Transcript { get; set; }
     }
-
-    public class Topic : IEnumerable<string>
-    {
-
-        public IEnumerable<string> Members { get; set; }
-
-        public IEnumerator<string> GetEnumerator()
-        {
-            return Members.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return ((IEnumerable)Members).GetEnumerator();
-        }
-
-    }
 }

@@ -7,9 +7,9 @@ using MontageServer.Models;
 
 namespace MontageServer.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class UsersRolesDbContext : IdentityDbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        public UsersRolesDbContext(DbContextOptions<UsersRolesDbContext> options)
             : base(options)
         {
         }

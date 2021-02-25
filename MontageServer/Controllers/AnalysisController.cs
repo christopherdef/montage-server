@@ -27,26 +27,7 @@ namespace MontageServer.Controllers
         // TODO: get this hard coded sensitive stuff outta here
         private static SpeechConfig SPEECH_CONFIG = SpeechConfig.FromSubscription("77f35c60bef24e58bce1a0c0b9f4be65", "eastus");
 
-        /// <summary>
-        /// Given an IFormFile, save to disk at the specified path
-        /// </summary>
-        private static void SaveFormFile(IFormFile formFile, string pt)
-        {
-            using (StreamWriter sw = File.CreateText(pt))
-            using (StreamReader sr = new StreamReader(formFile.OpenReadStream()))
-                sw.Write(sr.ReadToEnd());
-        }
-
-        private static AudioResponse DeserializeResponse(string scriptOutput)
-        {
-            var options = new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.All
-            };
-
-            // deserialize json AudioResponse from script
-            return JsonConvert.DeserializeObject<AudioResponse>(scriptOutput, options);
-        }
+        
 
         public static AudioResponse AnalyzeAudio(ref AudioResponse response, IFormFile audioFile)
         {
@@ -138,86 +119,6 @@ namespace MontageServer.Controllers
             }
         }
 
-        //public AudioResponse AnalyzeTranscriptDummy(ref AudioResponse audioResponse, IFormFile transcriptFile)
-        //{
-        //    Random rng;
-        //    var topics = new List<List<int>>();
-        //    var individuals = new List<string>();
-        //    var objects = new List<string>();
-        //    var sentiments = new List<double>();
-        //    using (var sr = new StreamReader(transcriptFile.OpenReadStream()))
-        //    {
-        //        string content = sr.ReadToEnd();
-
-        //        // TODO: send this content to the analysis script
-        //        // TODO: await AudioResponse from analysis script
-
-        //        /*
-        //         *  until ^^ that's complete, return some random garbage
-        //         */
-
-        //        content = content.Replace('\r', ' ');
-        //        content = content.Replace('\n', ' ');
-
-        //        // keep returns consistent for the same string
-        //        int chash = content.GetHashCode();
-        //        rng = new Random(chash);
-
-        //        var words = content.Split(' ');
-
-        //        int N = words.Length;
-
-        //        // add space for the topics
-        //        int topic_count = rng.Next(2, 10);
-        //        for (int j = 0; j < topic_count; j++)
-        //            topics.Append(new List<int>());
-
-        //        // randomly create a AudioResponse
-        //        for (int i = 0; i < N; i++)
-        //        {
-        //            string w = words[i];
-        //            if (w.Length == 0)
-        //                continue;
-
-        //            // "calculate" sentiment
-        //            double sentiment = (double)(w.Length) / (double)N;
-        //            sentiments.Add(sentiment);
-
-        //            // "assign" to a topic
-        //            int topic_idx = rng.Next(0, topic_count);
-        //            topics[topic_idx].Add(rng.Next(10, 100));
-
-        //            // randomly assign words as individuals, objects, or neither
-        //            switch (rng.Next(0, 10))
-        //            {
-        //                // individuals
-        //                case 0:
-        //                    individuals.Add(w);
-        //                    break;
-
-        //                // objects
-        //                case 1:
-        //                    objects.Add(w);
-        //                    break;
-
-        //                // neither
-        //                default:
-        //                    break;
-        //            }
-        //        }
-        //    }
-
-        //    // return the file name
-        //    // TODO: return more than just the file name
-        //    //return file != null ? "/uploads/" + file.FileName : null;
-        //    audioResponse.Topics = topics;
-        //    audioResponse.Individuals = individuals;
-        //    audioResponse.Objects = objects;
-        //    audioResponse.Sentiments = sentiments;
-        //    audioResponse.Transcript = "";
-        //    return audioResponse;
-        //}
-
         /// <summary>
         /// Runs the given cmd with the specified args as a separate shell process
         /// Awaits the process finishing before returning, *can lock*
@@ -243,6 +144,31 @@ namespace MontageServer.Controllers
                     r += "\n" + err;    
                 return r;
             }
+        }
+
+
+        /// <summary>
+        /// Given an IFormFile, save to disk at the specified path
+        /// </summary>
+        private static void SaveFormFile(IFormFile formFile, string pt)
+        {
+            using (StreamWriter sw = File.CreateText(pt))
+            using (StreamReader sr = new StreamReader(formFile.OpenReadStream()))
+                sw.Write(sr.ReadToEnd());
+        }
+
+        /// <summary>
+        /// Deserialize the json AudioResponse returned by the Python script
+        /// </summary>
+        private static AudioResponse DeserializeResponse(string scriptOutput)
+        {
+            var options = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+
+            // deserialize json AudioResponse from script
+            return JsonConvert.DeserializeObject<AudioResponse>(scriptOutput, options);
         }
     }
 }
