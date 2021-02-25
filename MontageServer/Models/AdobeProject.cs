@@ -9,12 +9,7 @@ using System.Threading.Tasks;
 
 namespace MontageServer.Models
 {
-    /*
-     Class for holding all of the data driven responses to the client
-     TODO: replace placeholders types with corresponding models for each
-        i.e. "topics" should be its own model and have its own serialization if needed
-    */
-    public class ProjectCaching
+    public class AdobeProject
     {
         [Key]
         public String ProjectID { get; set; }

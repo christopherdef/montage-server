@@ -32,7 +32,7 @@ namespace MontageServer
                 var services = scope.ServiceProvider;
                 try
                 {
-                    var context = services.GetRequiredService<MontageDBContext>();
+                    var context = services.GetRequiredService<MontageDbContext>();
                    // DbInitializer.Initialize(context);
                 }
                 catch (Exception ex)

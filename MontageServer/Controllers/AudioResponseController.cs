@@ -16,10 +16,12 @@ namespace MontageServer.Controllers
     public class AudioResponseController : ControllerBase
     {
         private readonly UsersRolesDbContext _usersRolesContext;
+        private readonly MontageDbContext _montageContext;
 
-        public AudioResponseController(UsersRolesDbContext context)
+        public AudioResponseController(MontageDbContext montageContext, UsersRolesDbContext usersRolesContext)
         {
-            _usersRolesContext = context;
+            _montageContext = montageContext;
+            _usersRolesContext = usersRolesContext;
         }
 
         /// <summary>
@@ -39,6 +41,7 @@ namespace MontageServer.Controllers
             // if no file was sent, return empty response
             if (file is null)
                 return Ok();
+
             HttpRequest currentRequest = HttpContext.Request;
 
             using (var sr = new StreamReader(file.OpenReadStream()))
@@ -48,10 +51,15 @@ namespace MontageServer.Controllers
                 AudioResponse response = new AudioResponse();
 
                 // TODO: read from DB, get response if it exists
-
+                var cachedProject = _montageContext.AdobeProject.Find(projectId, footagePath);
+                if (cachedProject != null)
+                {
+                    var audioResponse = AnalysisController.DeserializeResponse(cachedProject.AudioResponseString);
+                    return Ok(audioResponse);
+                }
 
                 // process file in bg
-               await Task.Run(() =>
+                await Task.Run(() =>
                {
                    // if an audio file was sent, return transcript
                    if (file.ContentType.StartsWith("audio/"))
@@ -64,7 +72,7 @@ namespace MontageServer.Controllers
                });
 
                 // TODO: write to DB (projId, projPath, response)
-
+                //_usersRolesContext.AudioResponse.Add(audioResponse);
 
 
                 // TODO: output validation, error codes, etc.

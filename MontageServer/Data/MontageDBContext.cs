@@ -7,16 +7,16 @@ using MontageServer.Models;
 
 namespace MontageServer.Data
 {
-    public class MontageDBContext : DbContext
+    public class MontageDbContext : DbContext
     {
-        public MontageDBContext(DbContextOptions<MontageDBContext> options)
+        public MontageDbContext(DbContextOptions<MontageDbContext> options)
             : base(options)
         {
         }
-        public DbSet<MontageServer.Models.ProjectCaching> ProjectCaching { get; set; }
+        public DbSet<AdobeProject> AdobeProject { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<ProjectCaching>().ToTable("ProjectCache");
+            modelBuilder.Entity<AdobeProject>().ToTable("AdobeProject");
         }
     }
 }

@@ -7,7 +7,7 @@ using MontageServer.Data;
 
 namespace MontageServer.Migrations
 {
-    [DbContext(typeof(MontageDBContext))]
+    [DbContext(typeof(MontageDbContext))]
     partial class MontageDBContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -18,7 +18,7 @@ namespace MontageServer.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("MontageServer.Models.ProjectCaching", b =>
+            modelBuilder.Entity("MontageServer.Models.AdobeProject", b =>
                 {
                     b.Property<string>("ProjectID")
                         .HasColumnType("nvarchar(450)");
@@ -31,7 +31,7 @@ namespace MontageServer.Migrations
 
                     b.HasKey("ProjectID");
 
-                    b.ToTable("ProjectCache");
+                    b.ToTable("AdobeProject");
                 });
 #pragma warning restore 612, 618
         }

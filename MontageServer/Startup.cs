@@ -33,7 +33,7 @@ namespace MontageServer
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<UsersRolesDbContext>();
 
-            services.AddDbContext<MontageDBContext>(options =>
+            services.AddDbContext<MontageDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddControllersWithViews();

@@ -19,7 +19,7 @@ namespace MontageServer.Models
     {
         [Key]
         [JsonProperty]
-        public string ReqId { get; set; }
+        public string ProjectId { get; set; }
 
         [JsonProperty]
         [NotMapped]
