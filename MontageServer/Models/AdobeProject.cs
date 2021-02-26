@@ -12,10 +12,10 @@ namespace MontageServer.Models
     public class AdobeProject
     {
         [Key]
-        public String ProjectID { get; set; }
+        public string ProjectId { get; set; }
 
-        public String Path { get; set; }
+        public string FootagePath { get; set; }
 
-        public String AudioResponseString { get; set; }
+        public string AudioResponseString { get; set; }
     }
 }

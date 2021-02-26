@@ -53,9 +53,9 @@ namespace MontageServer.Controllers
             SaveFormFile(transcriptFile, transFileFn);
 
             // run analysis on saved transcript file
-            string scriptOutput = RunCmd(PYTHON_PATH, $"{TRANSCRIPT_SCRIPT_PATH} {audioResponse.ProjectId} {transFileFn}");
+            string scriptOutput = RunCmd(PYTHON_PATH, $"{TRANSCRIPT_SCRIPT_PATH} {audioResponse.ProjectId ?? "-1"} {transFileFn}");
 
-            audioResponse = DeserializeResponse(scriptOutput);
+            audioResponse = AudioResponse.DeserializeResponse(scriptOutput);
 
             //audioResponse = JsonSerializer.Deserialize<AudioResponse>(scriptOutput, options);
 
@@ -74,7 +74,7 @@ namespace MontageServer.Controllers
             // transcribe saved audio file
             string scriptOutput = RunCmd(PYTHON_PATH, $"{AUDIO_SCRIPT_PATH} {audioResponse.ProjectId} {audioFileFn}");
 
-            audioResponse = DeserializeResponse(scriptOutput);
+            audioResponse = AudioResponse.DeserializeResponse(scriptOutput);
 
             return audioResponse;
         }
@@ -157,18 +157,6 @@ namespace MontageServer.Controllers
                 sw.Write(sr.ReadToEnd());
         }
 
-        /// <summary>
-        /// Deserialize the json AudioResponse returned by the Python script
-        /// </summary>
-        public static AudioResponse DeserializeResponse(string scriptOutput)
-        {
-            var options = new JsonSerializerSettings
-            {
-                TypeNameHandling = TypeNameHandling.All
-            };
-
-            // deserialize json AudioResponse from script
-            return JsonConvert.DeserializeObject<AudioResponse>(scriptOutput, options);
-        }
+        
     }
 }

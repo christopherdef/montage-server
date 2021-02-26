@@ -38,6 +38,14 @@ namespace MontageServer.Controllers
         [HttpPost]
         public async Task<IActionResult> PostFormData([FromForm] IFormFile file, [FromForm] string projectId, [FromForm] string footagePath)
         {
+            // read from DB, get response if it exists
+            var cachedProject = _montageContext.AdobeProject.Find(projectId);
+            if (cachedProject != null)
+            {
+                var audioResponse = AudioResponse.DeserializeResponse(cachedProject.AudioResponseString);
+                return Ok(audioResponse);
+            }
+
             // if no file was sent, return empty response
             if (file is null)
                 return Ok();
@@ -49,14 +57,8 @@ namespace MontageServer.Controllers
 
                 // initialize empty response
                 AudioResponse response = new AudioResponse();
-
-                // TODO: read from DB, get response if it exists
-                var cachedProject = _montageContext.AdobeProject.Find(projectId, footagePath);
-                if (cachedProject != null)
-                {
-                    var audioResponse = AnalysisController.DeserializeResponse(cachedProject.AudioResponseString);
-                    return Ok(audioResponse);
-                }
+                response.ProjectId = projectId;
+                
 
                 // process file in bg
                 await Task.Run(() =>
@@ -71,12 +73,19 @@ namespace MontageServer.Controllers
                        AnalysisController.AnalyzeTranscript(ref response, file);
                });
 
-                // TODO: write to DB (projId, projPath, response)
-                //_usersRolesContext.AudioResponse.Add(audioResponse);
+                // write to DB (projId, projPath, response)
+                cachedProject = new AdobeProject
+                {
+                    ProjectId = projectId,
+                    FootagePath = footagePath,
+                    AudioResponseString = response.Serialize()
+                };
 
+                _montageContext.AdobeProject.Add(cachedProject);
+                _montageContext.SaveChanges();
 
                 // TODO: output validation, error codes, etc.
-               return Ok(response);
+                return Ok(response);
             }
         }
        

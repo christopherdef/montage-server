@@ -20,16 +20,16 @@ namespace MontageServer.Migrations
 
             modelBuilder.Entity("MontageServer.Models.AdobeProject", b =>
                 {
-                    b.Property<string>("ProjectID")
+                    b.Property<string>("ProjectId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AudioResponseString")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Path")
+                    b.Property<string>("FootagePath")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ProjectID");
+                    b.HasKey("ProjectId");
 
                     b.ToTable("AdobeProject");
                 });

@@ -39,5 +39,29 @@ namespace MontageServer.Models
 
         [JsonProperty]
         public string Transcript { get; set; }
+
+
+        /// <summary>
+        /// Deserialize the json AudioResponse returned by the Python script
+        /// </summary>
+        public static AudioResponse DeserializeResponse(string scriptOutput)
+        {
+            var options = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+
+            // deserialize json AudioResponse from script
+            return JsonConvert.DeserializeObject<AudioResponse>(scriptOutput, options);
+        }
+
+        public string Serialize()
+        {
+            var options = new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.All
+            };
+            return JsonConvert.SerializeObject(this, options);
+        }
     }
 }

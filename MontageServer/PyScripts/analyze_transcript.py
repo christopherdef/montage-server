@@ -1,5 +1,4 @@
 ﻿import sys
-import speech_recognition as sr
 from os import path
 import random
 import time
@@ -26,7 +25,7 @@ END = '\n\n'
 
 class Response:
     def __init__(self, _id):
-        self.reqid = _id
+        self.projectid = _id
         self.topics = {}
         self.individuals = []
         self.objects = []

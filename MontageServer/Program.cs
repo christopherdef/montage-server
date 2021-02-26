@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,7 +16,11 @@ namespace MontageServer
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+
+            CreateDbIfNotExists(host);
+
+            host.Run();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -30,10 +35,26 @@ namespace MontageServer
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
+
+                //try
+                //{
+                //    var userRolesContext = services.GetRequiredService<UsersRolesDbContext>();
+                //    var manager = services.GetRequiredService<UserManager<IdentityUser>>();
+                //    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                //    var montageContext = services.GetRequiredService<MontageDbContext>();
+
+                //    UsersRolesDbInitializer.Initialize(userRolesContext, manager, roleManager, montageContext).Wait();
+                //}
+                //catch (Exception ex)
+                //{
+                //    var logger = services.GetRequiredService<ILogger<Program>>();
+                //    logger.LogError(ex, "An error occurred while seeding the Users portion of the database.");
+                //}
+
                 try
                 {
-                    var context = services.GetRequiredService<MontageDbContext>();
-                   // DbInitializer.Initialize(context);
+                    var montageContext = services.GetRequiredService<MontageDbContext>();
+                    MontageDbInitializer.Initialize(montageContext);
                 }
                 catch (Exception ex)
                 {

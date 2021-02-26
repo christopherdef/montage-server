@@ -32,13 +32,13 @@ namespace MontageServer.Migrations
                 name: "ProjectCache",
                 columns: table => new
                 {
-                    ProjectID = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ProjectId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     AudioResponseString = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Path = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ProjectCache", x => x.ProjectID);
+                    table.PrimaryKey("PK_ProjectCache", x => x.ProjectId);
                 });
         }
     }
