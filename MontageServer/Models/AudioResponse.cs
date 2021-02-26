@@ -39,6 +39,8 @@ namespace MontageServer.Models
 
         [JsonProperty]
         public string Transcript { get; set; }
+        [JsonProperty]
+        public string FootagePath { get; set; }
 
 
         /// <summary>

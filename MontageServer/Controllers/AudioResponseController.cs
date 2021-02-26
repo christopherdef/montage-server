@@ -43,6 +43,7 @@ namespace MontageServer.Controllers
             if (cachedProject != null)
             {
                 var audioResponse = AudioResponse.DeserializeResponse(cachedProject.AudioResponseString);
+                audioResponse.FootagePath = cachedProject.FootagePath;
                 return Ok(audioResponse);
             }
 
@@ -58,7 +59,7 @@ namespace MontageServer.Controllers
                 // initialize empty response
                 AudioResponse response = new AudioResponse();
                 response.ProjectId = projectId;
-                
+                response.FootagePath = footagePath;
 
                 // process file in bg
                 await Task.Run(() =>
@@ -83,7 +84,7 @@ namespace MontageServer.Controllers
 
                 _montageContext.AdobeProject.Add(cachedProject);
                 _montageContext.SaveChanges();
-
+                response.FootagePath = footagePath;
                 // TODO: output validation, error codes, etc.
                 return Ok(response);
             }

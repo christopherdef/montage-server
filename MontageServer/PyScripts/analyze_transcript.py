@@ -31,6 +31,7 @@ class Response:
         self.objects = []
         self.sentiments = []
         self.transcript = ""
+        self.footagePath = ""
 
 def analyze_transcript(response, transcript_pt):
     '''
