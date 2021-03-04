@@ -13,33 +13,39 @@ using Microsoft.AspNetCore.Mvc;
 using MontageServer.Models;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using System.Resources;
+using MontageServer.Properties;
 
 namespace MontageServer.Controllers
 {
     public class AnalysisController
     {
-        private static string PYTHON_PATH = @"..\Python38\python.exe";
-        private static string TRANSCRIPT_SCRIPT_PATH = @"PyScripts\analyze_transcript.py";
-        private static string AUDIO_SCRIPT_PATH = @"PyScripts\transcribe_audio.py";
-        private static string BASE_DIR = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\");
+        private static string? CONDA_PATH = Environment.GetEnvironmentVariable("CONDAPATH");
+        private static string PYTHON_PATH = Environment.GetEnvironmentVariable("PYTHONPATH");
+        private static string TRANSCRIPT_SCRIPT_PATH = Path.Combine(Resources.script_dir, Resources.analyze_transcript_pt);
+        private static string AUDIO_SCRIPT_PATH = Path.Combine(Resources.script_dir, Resources.transcribe_audio_pt);
+        //private static string BASE_DIR = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\..\");
 
         // load our subscription
         // TODO: get this hard coded sensitive stuff outta here
         private static SpeechConfig SPEECH_CONFIG = SpeechConfig.FromSubscription("77f35c60bef24e58bce1a0c0b9f4be65", "eastus");
 
-        
+
 
         public static AudioResponse AnalyzeAudio(ref AudioResponse response, IFormFile audioFile)
         {
+#if (DEBUG)
+            response.Transcript = Resources.sample_text;
+#else
             TranscribeAudio(ref response, audioFile);
-
+#endif
             string transFileFn = Path.GetTempFileName();
             using (StreamWriter sw = File.CreateText(transFileFn))
                 sw.Write(response.Transcript);
 
             FormFile transcriptFile = new FormFile(File.OpenRead(transFileFn), 0, response.Transcript.Length, audioFile.Name, transFileFn);
             AnalyzeTranscript(ref response, transcriptFile);
-                
+
             return response;
         }
 
@@ -56,8 +62,6 @@ namespace MontageServer.Controllers
             string scriptOutput = RunCmd(PYTHON_PATH, $"{TRANSCRIPT_SCRIPT_PATH} {audioResponse.ProjectId ?? "-1"} {transFileFn}");
 
             audioResponse = AudioResponse.DeserializeResponse(scriptOutput);
-
-            //audioResponse = JsonSerializer.Deserialize<AudioResponse>(scriptOutput, options);
 
             return audioResponse;
         }
@@ -125,15 +129,37 @@ namespace MontageServer.Controllers
         /// </summary>
         private static string RunCmd(string cmd, string args)
         {
-            cmd = BASE_DIR + cmd;
-            args = BASE_DIR + args;
-            ProcessStartInfo start = new ProcessStartInfo();
-            start.FileName = cmd; //cmd is full path to python.exe
-            start.Arguments = args; //args is path to .py file and any cmd line args
-            start.UseShellExecute = false;
-            start.RedirectStandardOutput = true;
-            start.RedirectStandardError = true;
-            using (Process process = Process.Start(start))
+            if (cmd == null)
+                throw new ArgumentNullException($"Command cannot be null or empty! \ncmd: {cmd}\nargs: {args}");
+
+            // start new shell
+            var process = new Process
+            {
+                StartInfo = new ProcessStartInfo
+                {
+                    FileName = "cmd.exe",
+                    UseShellExecute = false,
+                    RedirectStandardInput = true,
+                    RedirectStandardError = true,
+                    RedirectStandardOutput = true,
+                }
+            };
+            process.Start();
+
+            // send commands into shell
+            using (var sw = process.StandardInput)
+            {
+                if (sw.BaseStream.CanWrite)
+                {
+                    // activate Anaconda, if available
+                    sw.WriteLine(CONDA_PATH ?? "");
+
+                    // run command with args
+                    sw.WriteLine($"{cmd} {args}");
+                }
+            }
+
+            // read output
             using (StreamReader reader = process.StandardOutput)
             using (StreamReader errReader = process.StandardError)
             {
@@ -141,8 +167,17 @@ namespace MontageServer.Controllers
                 string err = errReader.ReadToEnd();
 
                 if (err.Length > 0)
-                    r += "\n" + err;    
-                return r;
+                    r += "\n" + err;
+
+                process.Kill();
+                string rTrimmed = r.Substring(r.IndexOf(args) + args.Length).Trim();
+
+                // try to get number of characters in response
+                if (!int.TryParse(rTrimmed.TakeWhile((c) => c != '\n').ToArray(), out int responseLength))
+                    throw new FormatException($"Unable to parse response length from response\n:{r}");
+
+                return string.Concat(rTrimmed.SkipWhile((c) => c != '\n')
+                                             .Take(responseLength));
             }
         }
 
@@ -157,6 +192,6 @@ namespace MontageServer.Controllers
                 sw.Write(sr.ReadToEnd());
         }
 
-        
+
     }
 }

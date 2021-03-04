@@ -39,6 +39,7 @@ namespace MontageServer.Models
 
         [JsonProperty]
         public string Transcript { get; set; }
+
         [JsonProperty]
         public string FootagePath { get; set; }
 
@@ -54,7 +55,17 @@ namespace MontageServer.Models
             };
 
             // deserialize json AudioResponse from script
-            return JsonConvert.DeserializeObject<AudioResponse>(scriptOutput, options);
+            Console.WriteLine(scriptOutput);
+
+            try
+            {
+                return JsonConvert.DeserializeObject<AudioResponse>(scriptOutput, options);
+            }
+            catch (Exception ex)
+            {
+                return new AudioResponse() { Transcript = $"SCRIPT OUTPUT\n{scriptOutput}\n\n\nEXCEPTION\n{ex}" };
+            }
+
         }
 
         public string Serialize()

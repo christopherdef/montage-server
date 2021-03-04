@@ -49,7 +49,7 @@ namespace MontageServer.Controllers
 
             // if no file was sent, return empty response
             if (file is null)
-                return Ok();
+                return Ok(new { message = $"unable to find preprocessed footage with id {projectId}"});
 
             HttpRequest currentRequest = HttpContext.Request;
 

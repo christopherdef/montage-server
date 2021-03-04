@@ -115,6 +115,7 @@ def main(_id, transcript_pt):
     # send analysis back to caller
     sys.stdout = stdout
     serialized_response = json.dumps(response.__dict__)
+    print(len(serialized_response)+1)
     print(serialized_response+END)
     sys.stdout.flush()
 
