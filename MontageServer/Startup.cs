@@ -31,15 +31,41 @@ namespace MontageServer
             services.AddDbContext<MontageDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+
             services.AddControllersWithViews();
             services.AddRazorPages();
 
             // identity service initialization
             services.AddDbContext<UsersRolesDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                    Configuration.GetConnectionString("UsersRolesConnection")));
+
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<UsersRolesDbContext>();
+                //.AddRoleManager<RoleManager<IdentityRole>>()
+                //.AddUserManager<UserManager<IdentityUser>>();
+
+
+            // identity service options
+            services.Configure<IdentityOptions>(options =>
+            {
+                // password settings
+                options.Password.RequireDigit = true;
+                options.Password.RequiredLength = 5;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+
+                // lockout settings
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                options.Lockout.MaxFailedAccessAttempts = 10;
+                options.Lockout.AllowedForNewUsers = true;
+
+                // User settings
+                //options.User.RequireUniqueEmail = true;
+            });
+
 
             //services.ConfigureApplicationCookie(options =>
             //{

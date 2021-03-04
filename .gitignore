@@ -578,3 +578,4 @@ dmypy.json
 .pyre/
 /TestingText2Speech
 /TestingPythonIntegration
+/MontageServer/.scripts

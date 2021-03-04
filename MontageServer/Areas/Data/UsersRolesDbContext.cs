@@ -13,6 +13,12 @@ namespace MontageServer.Data
             : base(options)
         {
         }
-        public DbSet<MontageServer.Models.AudioResponse> AudioResponse { get; set; }
+
+        public DbSet<AudioResponse> AudioResponse { get; set; }
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<AudioResponse>().ToTable("AudioResponse");
+        }
     }
 }

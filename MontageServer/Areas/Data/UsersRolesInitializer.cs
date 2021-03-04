@@ -9,9 +9,11 @@ namespace MontageServer.Data
 {
     public class UsersRolesDbInitializer
     {
-        internal async static Task Initialize(UsersRolesDbContext context, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager, MontageDbContext lotContext)
+        internal async static void Initialize(UsersRolesDbContext context, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             context.Database.Migrate();
+
+            context.SaveChanges();
 
             // ROLE SEEDING
             // certain roles are required for the proper functioning of the app
@@ -25,15 +27,9 @@ namespace MontageServer.Data
                 new IdentityRole()
                 {
                     Id = "2",
-                    Name = "Chair",
-                    NormalizedName = "Department Chair"
-                },
-                new IdentityRole()
-                {
-                    Id = "3",
-                    Name = "Prof",
-                    NormalizedName = "Professor"
-                },
+                    Name = "Client",
+                    NormalizedName = "Client"
+                }
             };
 
             // add all the required roles
@@ -52,28 +48,18 @@ namespace MontageServer.Data
                 var users = new List<IdentityUser>() {
                     new IdentityUser() {
                         Id = "10",
-                        NormalizedUserName = "Erin Parker",
-                        Email = "admin_erin@cs.utah.edu"
+                        NormalizedUserName = "Bobbert Alice",
+                        Email = "balice@gmail.com"
                     },
                     new IdentityUser() {
                         Id = "20",
-                        NormalizedUserName = "Ross Whitaker",
-                        Email = "chair_whitaker@cs.utah.edu"
+                        NormalizedUserName = "Steve Stevenson",
+                        Email = "sstevenson@yahoo.com"
                     },
                     new IdentityUser() {
-                        Id = "30",
-                        NormalizedUserName = "H. James de St. Germain",
-                        Email = "professor_jim@cs.utah.edu"
-                    },
-                    new IdentityUser() {
-                        Id = "31",
-                        NormalizedUserName = "Mary Hall",
-                        Email = "professor_mary@cs.utah.edu"
-                    },
-                    new IdentityUser() {
-                        Id = "32",
-                        NormalizedUserName = "Daniel Kopta",
-                        Email = "professor_danny@cs.utah.edu"
+                        Id = "21",
+                        NormalizedUserName = "Peter Peterson",
+                        Email = "ppeterson@hotmail.com"
                     }
                 };
 
@@ -83,7 +69,7 @@ namespace MontageServer.Data
                     u.UserName = u.Email;
                     u.EmailConfirmed = true;
                     u.SecurityStamp = Guid.NewGuid().ToString();
-                    await userManager.CreateAsync(u, "123ABC!@#def");
+                    await userManager.CreateAsync(u, "abcd3");
 
                     // add user to role based on id
                     switch (u.Id)
@@ -92,11 +78,7 @@ namespace MontageServer.Data
                             await userManager.AddToRoleAsync(u, "Admin");
                             break;
                         case string id when id[0].Equals('2'):
-                            await userManager.AddToRoleAsync(u, "Chair");
-                            break;
-                        // TODO: right here, or earlier, get the IdentityUsers marked as Instructor into the Instructors table as well
-                        case string id when id[0].Equals('3'):
-                            await userManager.AddToRoleAsync(u, "Prof");
+                            await userManager.AddToRoleAsync(u, "Client");
                             break;
                     }
 

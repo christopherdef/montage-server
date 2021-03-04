@@ -129,7 +129,7 @@ namespace MontageServer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .scripts.
+        ///   Looks up a localized string similar to wwwroot/py.
         /// </summary>
         internal static string script_dir {
             get {

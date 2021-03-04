@@ -20,7 +20,7 @@ namespace MontageServer.Controllers
 {
     public class AnalysisController
     {
-        private static string? CONDA_PATH = Environment.GetEnvironmentVariable("CONDAPATH");
+        private static string CONDA_PATH = Environment.GetEnvironmentVariable("CONDAPATH");
         private static string PYTHON_PATH = Environment.GetEnvironmentVariable("PYTHONPATH");
         private static string TRANSCRIPT_SCRIPT_PATH = Path.Combine(Resources.script_dir, Resources.analyze_transcript_pt);
         private static string AUDIO_SCRIPT_PATH = Path.Combine(Resources.script_dir, Resources.transcribe_audio_pt);
@@ -153,9 +153,17 @@ namespace MontageServer.Controllers
                 {
                     // activate Anaconda, if available
                     sw.WriteLine(CONDA_PATH ?? "");
-
-                    // run command with args
                     sw.WriteLine($"{cmd} {args}");
+
+                    //sw.WriteLine("where py");
+                    //sw.WriteLine(@"C:\Windows\py.exe");
+                    //sw.WriteLine("import sys; sys.stderr = sys.stdout");
+                    //sw.WriteLine("import numpy");
+                    //sw.WriteLine("imfdsport numpy");
+                    //sw.WriteLine("print('hello world')");
+                    //sw.WriteLine("import pyBTM");
+                    //sw.WriteLine("print(pyBTM)");
+                    // run command with args
                 }
             }
 

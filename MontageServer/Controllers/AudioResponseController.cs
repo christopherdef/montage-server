@@ -67,7 +67,12 @@ namespace MontageServer.Controllers
                    // if an audio file was sent, return transcript
                    if (file.ContentType.StartsWith("audio/"))
                    {
-                       //AnalysisController.TranscribeAudio(ref response, file);
+                       // TODO: file conversion - something like this vv
+                       // using (var ffmpegConverter = new FfmpegConverter())
+                       //    file = ffmpegConverter.convert(file, "wav");
+
+                       // analyze converted audio
+                       // AnalysisController.TranscribeAudio(ref response, file);
                        AnalysisController.AnalyzeAudio(ref response, file);
                    }
                    else

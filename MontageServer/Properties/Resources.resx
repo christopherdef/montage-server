@@ -128,7 +128,7 @@
     <value>..\Resources\sample_text.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="script_dir" xml:space="preserve">
-    <value>.scripts</value>
+    <value>wwwroot/py</value>
   </data>
   <data name="transcribe_audio" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\pyscripts\transcribe_audio.py;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
