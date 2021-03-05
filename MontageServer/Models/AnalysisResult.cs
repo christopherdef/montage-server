@@ -72,6 +72,26 @@ namespace MontageServer.Models
             }
         }
 
+        private class PythonResponse
+        {
+            [JsonProperty]
+            public string ClipId { get; set; }
+
+            [JsonProperty]
+            public IDictionary<string, IEnumerable<string>> Topics { get; set; }
+
+            [JsonProperty]
+            public IEnumerable<string> Individuals { get; set; }
+
+            [JsonProperty]
+            public IEnumerable<string> Objects { get; set; }
+
+            [JsonProperty]
+            public IEnumerable<double> Sentiments { get; set; }
+
+            [JsonProperty]
+            public string Transcript { get; set; }
+        }
         /// <summary>
         /// Deserialize the json AnalysisResult returned by the Python script
         /// </summary>
@@ -85,15 +105,25 @@ namespace MontageServer.Models
 
             try
             {
-                // dynamically resolve members of script json output (god, real languages have so many rules)
-                dynamic responseObj = JsonConvert.DeserializeObject<ExpandoObject>(scriptOutput, options);
-                var ar = new AnalysisResult();
-                var getPropType = new Func<string, Type>(s => ar.GetType().GetProperty(s).GetType() );
-                ar.Transcript = responseObj.transcript;
-                ar.Topics = responseObj.topics.Convert(getPropType("Topics"));
-                ar.Sentiments = responseObj.sentiments.Convert(getPropType("Sentiments"));
-                ar.Individuals = responseObj.individuals.Convert(getPropType("Individuals"));
-                ar.Objects = responseObj.objects.Convert(getPropType("Objects"));
+                //// dynamically resolve members of script json output (god, real languages have so many rules)
+                //dynamic responseObj = JsonConvert.DeserializeObject<ExpandoObject>(scriptOutput, options);
+
+                var pr = JsonConvert.DeserializeObject<PythonResponse>(scriptOutput, options);
+                var ar = new AnalysisResult()
+                {
+                    Topics = pr.Topics,
+                    Sentiments = pr.Sentiments,
+                    Objects = pr.Objects,
+                    Individuals = pr.Individuals,
+                    Transcript = pr.Transcript
+                };
+                //var getPropType = new Func<string, Type>(s => ar.GetType().GetProperty(s).GetType());
+                //ar.Transcript = responseObj.transcript;
+                //Type topic_type = getPropType("Topics");
+                //ar.Topics = 
+                //ar.Sentiments = Slapper.AutoMapper.MapDynamic<IEnumerable<double>> (responseObj.sentiments) as IEnumerable<double>;
+                //ar.Objects = Slapper.AutoMapper.MapDynamic<IEnumerable<string>> (responseObj.objects) as IEnumerable<string>;
+                //ar.Individuals = Slapper.AutoMapper.MapDynamic<IEnumerable<string>> (responseObj.individuals) as IEnumerable<string>;
                 return ar;
             }
             catch (Exception ex)
