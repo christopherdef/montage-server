@@ -32,7 +32,7 @@ namespace MontageServer.Controllers
 
 
 
-        public static AudioResponse AnalyzeAudio(ref AudioResponse response, IFormFile audioFile)
+        public static AnalysisResult AnalyzeAudio(ref AnalysisResult response, IFormFile audioFile)
         {
 #if (DEBUG)
             response.Transcript = Resources.sample_text;
@@ -52,16 +52,16 @@ namespace MontageServer.Controllers
         /// <summary>
         /// Run Python analysis script on the given transcriptFile
         /// </summary>
-        public static AudioResponse AnalyzeTranscript(ref AudioResponse audioResponse, IFormFile transcriptFile)
+        public static AnalysisResult AnalyzeTranscript(ref AnalysisResult audioResponse, IFormFile transcriptFile)
         {
             // save transcript as file with unique name
             string transFileFn = Path.GetTempFileName();
             SaveFormFile(transcriptFile, transFileFn);
 
             // run analysis on saved transcript file
-            string scriptOutput = RunCmd(PYTHON_PATH, $"{TRANSCRIPT_SCRIPT_PATH} {audioResponse.ProjectId ?? "-1"} {transFileFn}");
+            string scriptOutput = RunCmd(PYTHON_PATH, $"{TRANSCRIPT_SCRIPT_PATH} {audioResponse.ClipId ?? "-1"} {transFileFn}");
 
-            audioResponse = AudioResponse.DeserializeResponse(scriptOutput);
+            audioResponse = AnalysisResult.DeserializeResponse(scriptOutput);
 
             return audioResponse;
         }
@@ -69,16 +69,16 @@ namespace MontageServer.Controllers
         /// <summary>
         /// Local transcription of the given audioFile with Sphinx
         /// </summary>
-        public static AudioResponse TranscribeAudioLocal(ref AudioResponse audioResponse, IFormFile audioFile)
+        public static AnalysisResult TranscribeAudioLocal(ref AnalysisResult audioResponse, IFormFile audioFile)
         {
             // save audio as file with unique name
             string audioFileFn = Path.GetTempFileName();
             SaveFormFile(audioFile, audioFileFn);
 
             // transcribe saved audio file
-            string scriptOutput = RunCmd(PYTHON_PATH, $"{AUDIO_SCRIPT_PATH} {audioResponse.ProjectId} {audioFileFn}");
+            string scriptOutput = RunCmd(PYTHON_PATH, $"{AUDIO_SCRIPT_PATH} {audioResponse.ClipId} {audioFileFn}");
 
-            audioResponse = AudioResponse.DeserializeResponse(scriptOutput);
+            audioResponse = AnalysisResult.DeserializeResponse(scriptOutput);
 
             return audioResponse;
         }
@@ -86,7 +86,7 @@ namespace MontageServer.Controllers
         /// <summary>
         /// Remote audio transcription of the given audioFile with CognitiveServices
         /// </summary>
-        public static AudioResponse TranscribeAudio(ref AudioResponse audioResponse, IFormFile audioFile)
+        public static AnalysisResult TranscribeAudio(ref AnalysisResult audioResponse, IFormFile audioFile)
         {
             var audioFormat128 = AudioStreamFormat.GetWaveFormatPCM(8000, 16, 1);
             var audioFormat256 = AudioStreamFormat.GetWaveFormatPCM(16000, 16, 1);

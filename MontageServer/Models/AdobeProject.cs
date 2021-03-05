@@ -1,6 +1,5 @@
-using Newtonsoft.Json;
+﻿using Microsoft.AspNetCore.Identity;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -14,8 +13,8 @@ namespace MontageServer.Models
         [Key]
         public string ProjectId { get; set; }
 
-        public string FootagePath { get; set; }
+        [Key]
+        public virtual string UserId { get; set; }
 
-        public string AudioResponseString { get; set; }
     }
 }

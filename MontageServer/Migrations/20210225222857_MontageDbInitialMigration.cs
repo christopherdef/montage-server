@@ -12,7 +12,7 @@ namespace MontageServer.Migrations
                 {
                     ProjectID = table.Column<string>(nullable: false),
                     Path = table.Column<string>(nullable: true),
-                    AudioResponseString = table.Column<string>(nullable: true)
+                    AnalysisResultString = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {

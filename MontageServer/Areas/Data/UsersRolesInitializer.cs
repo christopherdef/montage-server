@@ -9,7 +9,7 @@ namespace MontageServer.Data
 {
     public class UsersRolesDbInitializer
     {
-        internal async static void Initialize(UsersRolesDbContext context, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        internal async static Task Initialize(UsersRolesDbContext context, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             context.Database.Migrate();
 
@@ -84,8 +84,8 @@ namespace MontageServer.Data
 
                 }
 
-                context.SaveChanges();
             }
+            context.SaveChanges();
 
 
 

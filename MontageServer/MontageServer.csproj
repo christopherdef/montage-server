@@ -37,6 +37,29 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="Data\Migrations\20210305081733_ClipProjectDisambig.cs" />
+    <Compile Remove="Data\Migrations\20210305081733_ClipProjectDisambig.Designer.cs" />
+    <Compile Remove="Migrations\20210226001041_RenamePathAndIdColumns.cs" />
+    <Compile Remove="Migrations\20210226001041_RenamePathAndIdColumns.Designer.cs" />
+    <Compile Remove="Migrations\20210304063645_ProjectClipDisambiguation.cs" />
+    <Compile Remove="Migrations\20210304063645_ProjectClipDisambiguation.Designer.cs" />
+    <Compile Remove="Migrations\20210304064118_ProjectClipMany2Many.cs" />
+    <Compile Remove="Migrations\20210304064118_ProjectClipMany2Many.Designer.cs" />
+    <Compile Remove="Migrations\20210304070349_ProjectClipDisambiguation.cs" />
+    <Compile Remove="Migrations\20210304070349_ProjectClipDisambiguation.Designer.cs" />
+    <Compile Remove="Migrations\20210305080813_ClipProjectDisambigPlusIdentity.cs" />
+    <Compile Remove="Migrations\20210305080813_ClipProjectDisambigPlusIdentity.Designer.cs" />
+    <Compile Remove="Migrations\20210305081148_ClipProjectDisambig.cs" />
+    <Compile Remove="Migrations\20210305081148_ClipProjectDisambig.Designer.cs" />
+    <Compile Remove="Migrations\20210305081618_ClipProjectDisambigPlusIdentity.cs" />
+    <Compile Remove="Migrations\20210305081618_ClipProjectDisambigPlusIdentity.Designer.cs" />
+    <Compile Remove="Migrations\20210305081659_ClipProjectDisambig.cs" />
+    <Compile Remove="Migrations\20210305081659_ClipProjectDisambig.Designer.cs" />
+    <Compile Remove="Migrations\20210305084632_ClipProjectDisambig.cs" />
+    <Compile Remove="Migrations\20210305084632_ClipProjectDisambig.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

@@ -2,15 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MontageServer.Data;
 
 namespace MontageServer.Migrations
 {
     [DbContext(typeof(MontageDbContext))]
-    partial class MontageDBContextModelSnapshot : ModelSnapshot
+    [Migration("20210305091309_ClipProjectDisambig")]
+    partial class ClipProjectDisambig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

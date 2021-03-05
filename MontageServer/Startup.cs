@@ -38,7 +38,8 @@ namespace MontageServer
             // identity service initialization
             services.AddDbContext<UsersRolesDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("UsersRolesConnection")));
+                    Configuration.GetConnectionString("DefaultConnection")));
+            //Configuration.GetConnectionString("UsersRolesConnection")));
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()

@@ -1,4 +1,4 @@
-﻿@model MontageServer.Models.AudioResponse
+﻿@model MontageServer.Models.AnalysisResult
 
 @{
     ViewData["Title"] = "Edit";
@@ -6,13 +6,13 @@
 
 <h1>Edit</h1>
 
-<h4>AudioResponse</h4>
+<h4>AnalysisResult</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ProjectId" />
+            <input type="hidden" asp-for="ClipId" />
             <div class="form-group">
                 <label asp-for="Transcript" class="control-label"></label>
                 <input asp-for="Transcript" class="form-control" />

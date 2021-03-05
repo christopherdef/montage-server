@@ -15,11 +15,11 @@ namespace MontageServer.Models
         i.e. "topics" should be its own model and have its own serialization if needed
     */
     [JsonObject(MemberSerialization.OptIn)]
-    public class AudioResponse
+    public class AnalysisResult
     {
         [Key]
         [JsonProperty]
-        public string ProjectId { get; set; }
+        public string ClipId { get; set; }
 
         [JsonProperty]
         [NotMapped]
@@ -45,25 +45,25 @@ namespace MontageServer.Models
 
 
         /// <summary>
-        /// Deserialize the json AudioResponse returned by the Python script
+        /// Deserialize the json AnalysisResult returned by the Python script
         /// </summary>
-        public static AudioResponse DeserializeResponse(string scriptOutput)
+        public static AnalysisResult DeserializeResponse(string scriptOutput)
         {
             var options = new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
             };
 
-            // deserialize json AudioResponse from script
+            // deserialize json AnalysisResult from script
             Console.WriteLine(scriptOutput);
 
             try
             {
-                return JsonConvert.DeserializeObject<AudioResponse>(scriptOutput, options);
+                return JsonConvert.DeserializeObject<AnalysisResult>(scriptOutput, options);
             }
             catch (Exception ex)
             {
-                return new AudioResponse() { Transcript = $"SCRIPT OUTPUT\n{scriptOutput}\n\n\nEXCEPTION\n{ex}" };
+                return new AnalysisResult() { Transcript = $"SCRIPT OUTPUT\n{scriptOutput}\n\n\nEXCEPTION\n{ex}" };
             }
 
         }

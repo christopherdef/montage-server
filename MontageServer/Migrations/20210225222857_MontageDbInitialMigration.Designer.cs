@@ -25,7 +25,7 @@ namespace MontageServer.Migrations
                     b.Property<string>("ProjectID")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("AudioResponseString")
+                    b.Property<string>("AnalysisResultString")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Path")
