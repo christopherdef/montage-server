@@ -72,6 +72,7 @@ namespace MontageServer
 
                 try
                 {
+                    
                     var userRolesContext = services.GetRequiredService<UsersRolesDbContext>();
                     var montageContext = services.GetRequiredService<MontageDbContext>();
                     var manager = services.GetRequiredService<UserManager<IdentityUser>>();

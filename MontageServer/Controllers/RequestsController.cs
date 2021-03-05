@@ -34,7 +34,7 @@ namespace MontageServer.Controllers
         /// TODO: properly format output from script
         /// </summary>
         /// <returns></returns>
-        // POST: api/AnalyzeClip
+        // POST: api/Requests
         [HttpPost]
         public async Task<IActionResult> AnalyzeClip([FromForm] IFormFile file, [FromForm] string projectId, [FromForm] string clipId, [FromForm] string userId, [FromForm] string footagePath)
         {
@@ -78,7 +78,7 @@ namespace MontageServer.Controllers
 
             // ELIF no file was sent, and a clip couldn't be found, return empty response
             else if (file is null)
-                return Ok(new { message = $"unable to find preprocessed footage with id {projectId}" });
+                return Ok(new { message = $"unable to find preprocessed footage with id {projectId}/{clipId} for user {userId}" });
 
             // ELIF clip+project unseen, process file and add to db
             else
@@ -87,9 +87,10 @@ namespace MontageServer.Controllers
 
                 using (var sr = new StreamReader(file.OpenReadStream()))
                 {
-
                     // initialize empty response
                     AnalysisResult response = new AnalysisResult();
+                    response.ClipId = clipId;
+                    response.FootagePath = footagePath;
 
                     // process file in bg
                     await Task.Run(() =>
@@ -109,35 +110,47 @@ namespace MontageServer.Controllers
                             AnalysisController.AnalyzeTranscript(ref response, file);
                     });
 
-                    // write to DB 
-                    var clip = new AdobeClip
+                    // load or make corresponding clip
+                    var clip = FindClip(clipId);
+                    if (clip == null)
                     {
-                        ClipId = clipId,
-                        FootagePath = footagePath,
-                        AnalysisResultString = response.Serialize()
-                    };
+                        clip = new AdobeClip
+                        {
+                            ClipId = clipId,
+                            FootagePath = footagePath,
+                            AnalysisResultString = response.Serialize()
+                        };
+                        _montageContext.AdobeClips.Add(clip);
+                        _montageContext.SaveChanges();
+                    }
 
-                    var project = (from p in _montageContext.AdobeProjects where p.ProjectId.Equals(projectId) select p).FirstOrDefault();
+                    // load or make corresponding project
+                    var project = FindProject(projectId);
                     if(project == null)
                     {
                         project = new AdobeProject
                         {
                             ProjectId = projectId,
-
                             UserId = userId
                         };
                         _montageContext.AdobeProjects.Add(project);
                         _montageContext.SaveChanges();
                     }
-                    var assignment = new ClipAssignment
-                    {
-                        ProjectId = projectId,
-                        Id = project.UserId,
-                        ClipId = clip.ClipId
-                    };
 
-                    _montageContext.AdobeClips.Add(clip);
-                    _montageContext.ClipAssignments.Add(assignment);
+                    // load or make corresponding clip assignment
+                    var assignment = FindAssignment(projectId, clipId);
+                    if (assignment == null)
+                    {
+                        assignment = new ClipAssignment
+                        {
+                            ProjectId = projectId,
+                            Id = project.UserId,
+                            ClipId = clip.ClipId
+                        };
+                        _montageContext.ClipAssignments.Add(assignment);
+                        _montageContext.SaveChanges();
+                    }
+
                     await _montageContext.SaveChangesAsync();
 
 
@@ -148,6 +161,27 @@ namespace MontageServer.Controllers
                 }
             
             }
+        }
+
+        private AdobeProject FindProject(string projectId)
+        {
+            return (from p in _montageContext.AdobeProjects 
+                    where p.ProjectId.Equals(projectId) 
+                    select p).FirstOrDefault();
+        }
+
+        private AdobeClip FindClip(string clipId)
+        {
+            return (from c in _montageContext.AdobeClips
+                    where c.ClipId.Equals(clipId)
+                    select c).FirstOrDefault();
+        }
+
+        private ClipAssignment FindAssignment(string projectId, string clipId)
+        {
+            return (from a in _montageContext.ClipAssignments
+                    where a.ClipId.Equals(clipId) && a.ProjectId.Equals(projectId)
+                    select a).FirstOrDefault();
         }
 
         /// <summary>

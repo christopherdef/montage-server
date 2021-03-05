@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
@@ -74,6 +75,13 @@ namespace MontageServer
             //    options.LogoutPath = $"/Identity/Account/Logout";
             //    options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
             //});
+
+
+            // Remove form length limit
+            services.Configure<FormOptions>(options =>
+            {
+                options.MemoryBufferThreshold = int.MaxValue;
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

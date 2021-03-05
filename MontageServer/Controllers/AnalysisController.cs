@@ -61,8 +61,8 @@ namespace MontageServer.Controllers
             // run analysis on saved transcript file
             string scriptOutput = RunCmd(PYTHON_PATH, $"{TRANSCRIPT_SCRIPT_PATH} {audioResponse.ClipId ?? "-1"} {transFileFn}");
 
-            audioResponse = AnalysisResult.DeserializeResponse(scriptOutput);
-
+            var pythonResponse = AnalysisResult.DeserializePythonResponse(scriptOutput);
+            audioResponse.JoinRight(pythonResponse);
             return audioResponse;
         }
 
@@ -78,7 +78,8 @@ namespace MontageServer.Controllers
             // transcribe saved audio file
             string scriptOutput = RunCmd(PYTHON_PATH, $"{AUDIO_SCRIPT_PATH} {audioResponse.ClipId} {audioFileFn}");
 
-            audioResponse = AnalysisResult.DeserializeResponse(scriptOutput);
+            var pythonResponse = AnalysisResult.DeserializePythonResponse(scriptOutput);
+            audioResponse.JoinRight(pythonResponse);
 
             return audioResponse;
         }

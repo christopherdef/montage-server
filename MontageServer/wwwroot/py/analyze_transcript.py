@@ -26,13 +26,12 @@ END = '\n\n'
 
 class Response:
     def __init__(self, _id):
-        self.projectid = _id
+        self.clipid = _id
         self.topics = {}
         self.individuals = []
         self.objects = []
         self.sentiments = []
         self.transcript = ""
-        self.footagePath = ""
 
 def analyze_transcript(response, transcript_pt):
     '''
@@ -125,7 +124,6 @@ def main(_id, transcript_pt):
     response = Response(_id)
 
     # analyze transcript
-    #time.sleep(2) # simulate processing time 
     response = analyze_transcript(response, transcript_pt)
 
     # send analysis back to caller
