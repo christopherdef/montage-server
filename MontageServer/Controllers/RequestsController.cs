@@ -60,6 +60,10 @@ namespace MontageServer.Controllers
                 var clip = query.FirstOrDefault();
                 var result = (AnalysisResult.DeserializeResponse(clip.AnalysisResultString));
 
+                // only return currently stored result if the result wasn't errored out
+                if (result.Error)
+                    result = RepairResult(result);
+
                 // footagePath and clipId with update if provided
                 result.ClipId = clipId ?? result.ClipId;
                 result.FootagePath = footagePath ?? result.FootagePath;
@@ -144,6 +148,16 @@ namespace MontageServer.Controllers
                 }
             
             }
+        }
+
+        /// <summary>
+        /// Repairs a result which was previously unable to be analyzed
+        /// If repair fails, return original result
+        /// </summary>
+        private AnalysisResult RepairResult(AnalysisResult result)
+        {
+            // TODO: complete method
+            return result;
         }
 
         /// <summary>

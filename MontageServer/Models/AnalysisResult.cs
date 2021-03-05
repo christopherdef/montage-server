@@ -43,6 +43,9 @@ namespace MontageServer.Models
         [JsonProperty]
         public string FootagePath { get; set; }
 
+        [JsonProperty]
+        public bool Error { get; set; } = false;
+
 
         /// <summary>
         /// Deserialize the json AnalysisResult returned by the Python script
@@ -63,7 +66,7 @@ namespace MontageServer.Models
             }
             catch (Exception ex)
             {
-                return new AnalysisResult() { Transcript = $"SCRIPT OUTPUT\n{scriptOutput}\n\n\nEXCEPTION\n{ex}" };
+                return new AnalysisResult() { Transcript = $"SCRIPT OUTPUT\n{scriptOutput}\n\n\nEXCEPTION\n{ex}", Error = true };
             }
 
         }

@@ -61,16 +61,6 @@ namespace MontageServer.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] analyze_transcript {
-            get {
-                object obj = ResourceManager.GetObject("analyze_transcript", resourceCulture);
-                return ((byte[])(obj));
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to analyze_transcript.py.
         /// </summary>
         internal static string analyze_transcript_pt {
@@ -134,16 +124,6 @@ namespace MontageServer.Properties {
         internal static string script_dir {
             get {
                 return ResourceManager.GetString("script_dir", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Byte[].
-        /// </summary>
-        internal static byte[] transcribe_audio {
-            get {
-                object obj = ResourceManager.GetObject("transcribe_audio", resourceCulture);
-                return ((byte[])(obj));
             }
         }
         

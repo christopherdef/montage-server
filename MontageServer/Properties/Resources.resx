@@ -117,21 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="analyze_transcript" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\pyscripts\analyze_transcript.py;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
   <data name="analyze_transcript_pt" xml:space="preserve">
     <value>analyze_transcript.py</value>
   </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="sample_text" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\sample_text.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="script_dir" xml:space="preserve">
     <value>wwwroot/py</value>
-  </data>
-  <data name="transcribe_audio" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\pyscripts\transcribe_audio.py;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="transcribe_audio_pt" xml:space="preserve">
     <value>transcribe_audio.py</value>

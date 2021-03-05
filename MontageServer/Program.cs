@@ -39,30 +39,30 @@ namespace MontageServer
                     webBuilder.UseStartup<Startup>();
                 });
 
-        /// <summary>
-        /// Delete written scripts to prevent versioning issues
-        /// </summary>
-        private static void DeleteResourcesFromDisk()
-        {
-            File.Delete(Resources.analyze_transcript_pt);
-            File.Delete(Resources.transcribe_audio_pt);
+        ///// <summary>
+        ///// Delete written scripts to prevent versioning issues
+        ///// </summary>
+        //private static void DeleteResourcesFromDisk()
+        //{
+        //    File.Delete(Resources.analyze_transcript_pt);
+        //    File.Delete(Resources.transcribe_audio_pt);
 
-            Directory.Delete(Resources.script_dir);
-        }
+        //    Directory.Delete(Resources.script_dir);
+        //}
 
-        /// <summary>
-        /// Write scripts to disk at predetermined locations so they can be run later
-        /// </summary>
-        private static void WriteResourcesToDisk()
-        {
-            Directory.CreateDirectory(Resources.script_dir);
-            using (var sw = File.CreateText(Path.Combine(Resources.script_dir, Resources.analyze_transcript_pt)))
-                sw.Write(Encoding.UTF8.GetString(Resources.analyze_transcript));
+        ///// <summary>
+        ///// Write scripts to disk at predetermined locations so they can be run later
+        ///// </summary>
+        //private static void WriteResourcesToDisk()
+        //{
+        //    Directory.CreateDirectory(Resources.script_dir);
+        //    using (var sw = File.CreateText(Path.Combine(Resources.script_dir, Resources.analyze_transcript_pt)))
+        //        sw.Write(Encoding.UTF8.GetString(Resources.analyze_transcript));
 
-            using (var sw = File.CreateText(Path.Combine(Resources.script_dir, Resources.transcribe_audio_pt)))
-                sw.Write(Encoding.UTF8.GetString(Resources.transcribe_audio));
+        //    using (var sw = File.CreateText(Path.Combine(Resources.script_dir, Resources.transcribe_audio_pt)))
+        //        sw.Write(Encoding.UTF8.GetString(Resources.transcribe_audio));
 
-        }
+        //}
 
         private static void CreateDbIfNotExists(IHost host)
         {

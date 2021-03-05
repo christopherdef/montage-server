@@ -19,7 +19,8 @@ punc = set(string.punctuation)
 
 nlp = spacy.load('en_core_web_sm')
 nlp.disable_pipes('parser', 'ner')
-
+from nltk.sentiment import SentimentIntensityAnalyzer
+sia = SentimentIntensityAnalyzer()
 
 END = '\n\n'
 
@@ -45,14 +46,29 @@ def analyze_transcript(response, transcript_pt):
     response.topics =   get_topics(response.transcript)
     response.individuals = ["a", "b"]
     response.objects = ["o1", "o2"]
-    response.sentiments = [0.1, 0.3]
+    response.sentiments = get_sentiments(response.transcript)
 
     return response
 
+def get_sentiments(transcript):
+    sentiments = []
+    
+    for w in transcript.split():
+        s = sia.polarity_scores(w)
+        sentiments.append(s['pos'] if s['pos'] >= s['neg'] else -s['neg'])
+
+    return sentiments
+    
 def get_topics(transcript):
     pp_txt = []
     for line in transcript.split('\n'):
         pp_txt.append(' '.join(preprocess(line)))
+    
+    # temporary attempt to use cosine sim on word vectors
+    #naive_topics = {}
+    #nlp_pp_txt = nlp(pp_txt)
+    #sim_mat = np.array([*([*(wi.similarity(wj) for wi in nlp_pp_txt)] for wj in nlp_pp_txt)])
+    
 
     tmpf = tempfile.NamedTemporaryFile(mode='r+', delete=False, encoding='utf8')
     tmpf.write(('\n'.join(pp_txt)))
