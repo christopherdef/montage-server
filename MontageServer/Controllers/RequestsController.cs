@@ -24,6 +24,7 @@ namespace MontageServer.Controllers
             _usersRolesContext = usersRolesContext;
         }
 
+
         /// <summary>
         /// On receipt of POST request, upload the provided file to disk
         /// then, trigger file analysis script and await response.
@@ -36,7 +37,11 @@ namespace MontageServer.Controllers
         /// <returns></returns>
         // POST: api/Requests
         [HttpPost]
-        public async Task<IActionResult> AnalyzeClip([FromForm] IFormFile file, [FromForm] string projectId, [FromForm] string clipId, [FromForm] string userId, [FromForm] string footagePath)
+        public async Task<IActionResult> AnalyzeClip([FromForm] IFormFile file, 
+                                                     [FromForm] string projectId, 
+                                                     [FromForm] string clipId, 
+                                                     [FromForm] string userId, 
+                                                     [FromForm] string footagePath)
         {
             // TODO: userId never checked!
 
@@ -144,7 +149,7 @@ namespace MontageServer.Controllers
                         assignment = new ClipAssignment
                         {
                             ProjectId = projectId,
-                            Id = project.UserId,
+                            UserId = project.UserId,
                             ClipId = clip.ClipId
                         };
                         _montageContext.ClipAssignments.Add(assignment);

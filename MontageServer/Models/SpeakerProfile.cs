@@ -7,16 +7,11 @@ using System.Threading.Tasks;
 
 namespace MontageServer.Models
 {
-    /// <summary>
-    /// Assigns a particular clip to a particular project
-    /// Multiple clips can be in a project
-    /// Multiple projects can own a clip
-    /// </summary>
-    public class ClipAssignment
+    public class SpeakerProfile
     {
+
         [Key]
-        [ForeignKey("Clip")]
-        public virtual string ClipId { get; set; }
+        public string SpeakerId { get; set; }
 
         [Key]
         public virtual string ProjectId { get; set; }
@@ -24,8 +19,10 @@ namespace MontageServer.Models
         [Key]
         public virtual string UserId { get; set; }
 
+        public string ModelPath { get; set; } = null;
+
+
         [ForeignKey("ProjectId, UserId")]
         public virtual AdobeProject Project { get; set; }
-        public virtual AdobeClip Clip { get; set; }
     }
 }

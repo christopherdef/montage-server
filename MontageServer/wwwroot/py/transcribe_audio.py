@@ -6,9 +6,6 @@ import random
 import time
 import json
 
-# TODO: import numpy fails!
-# import numpy as np
-
 END = '\n\n'
 
 class Response:

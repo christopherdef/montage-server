@@ -16,6 +16,7 @@ namespace MontageServer.Data
         public DbSet<AdobeClip> AdobeClips { get; set; }
         public DbSet<AdobeProject> AdobeProjects { get; set; }
         public DbSet<ClipAssignment> ClipAssignments { get; set; }
+        public DbSet<SpeakerProfile> SpeakerProfiles { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -25,13 +26,18 @@ namespace MontageServer.Data
             modelBuilder.Entity<AdobeProject>().ToTable("AdobeProject");
             modelBuilder.Entity<ClipAssignment>().ToTable("ClipAssignment");
             modelBuilder.Entity<AnalysisResult>().ToTable("AnalysisResult");
+            modelBuilder.Entity<SpeakerProfile>().ToTable("SpeakerProfiles");
 
 
             modelBuilder.Entity<AdobeProject>()
                 .HasKey(p => new { p.ProjectId, p.UserId });
 
             modelBuilder.Entity<ClipAssignment>()
-                .HasKey(a => new { a.ProjectId, a.ClipId });
+                .HasKey(a => new { a.ProjectId, a.ClipId, a.UserId });
+
+            modelBuilder.Entity<SpeakerProfile>()
+                .HasKey(s => new { s.SpeakerId, s.ProjectId, s.UserId });
         }
+
     }
 }

@@ -18,7 +18,6 @@ namespace MontageServer.Models
 
         public string AnalysisResultString { get; set; }
 
-
         public AnalysisResult GetAnalysisResult()
         {
             return AnalysisResult.DeserializeResponse(AnalysisResultString);
