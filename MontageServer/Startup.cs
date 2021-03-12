@@ -28,20 +28,19 @@ namespace MontageServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            // connect to montage server
+            // connect to database with both contexts 
             services.AddDbContext<MontageDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-
-            services.AddControllersWithViews();
-            services.AddRazorPages();
-
-            // identity service initialization
             services.AddDbContext<UsersRolesDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            //Configuration.GetConnectionString("UsersRolesConnection")));
 
+            // add views and razor support
+            services.AddControllersWithViews();
+            services.AddRazorPages();
+
+            // add identity services
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<UsersRolesDbContext>();
@@ -49,7 +48,7 @@ namespace MontageServer
                 //.AddUserManager<UserManager<IdentityUser>>();
 
 
-            // identity service options
+            // configure identity service options
             services.Configure<IdentityOptions>(options =>
             {
                 // password settings
@@ -82,6 +81,9 @@ namespace MontageServer
             {
                 options.MemoryBufferThreshold = int.MaxValue;
             });
+
+
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

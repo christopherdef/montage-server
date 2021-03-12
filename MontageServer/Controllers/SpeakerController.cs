@@ -28,9 +28,9 @@ namespace MontageServer.Controllers
         /// </summary>
         // POST: api/Speaker
         [HttpPost]
-        public async Task<IActionResult> EnrollSpeaker([FromForm] string userId, 
-                                                       [FromForm] string projectId, 
-                                                       [FromForm] string speakerId, 
+        public async Task<IActionResult> EnrollSpeaker([FromForm] string userId,
+                                                       [FromForm] string projectId,
+                                                       [FromForm] string speakerId,
                                                        [FromForm] IEnumerable<IFormFile> files)
         {
             // check if speaker has already been enrolled
@@ -38,13 +38,21 @@ namespace MontageServer.Controllers
                          where s.ProjectId.Equals(projectId)
                          select s).FirstOrDefault();
 
-            string modelPath = (query == null) ? query.ModelPath : Path.GetTempFileName();
+            string modelPath = query?.ModelPath ?? Path.GetTempFileName();
 
             // TODO: fill in speaker enrollment method
-            foreach (var f in files)
+            try
             {
-                // train model
-                // await AnalysisController.EnrollSpeaker(speakerId, modelPath, f)
+                foreach (var f in files)
+                {
+                    // train model
+                    // await AnalysisController.EnrollSpeaker(speakerId, modelPath, f)
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, 
+                                  new { message = $"Error enrolling speaker {speakerId}!\nError:\n{e}" });
             }
 
             // if this speaker hasn't been enrolled, enroll them once training is complete
@@ -64,10 +72,10 @@ namespace MontageServer.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetSegmentations([FromForm] string userId, 
-                                                          [FromForm] string projectId, 
-                                                          [FromForm] ISet<string> speakerIds, 
-                                                          [FromForm] IFormFile clipFile)
+        public async Task<IActionResult> GetSegmentations([FromForm] string userId,
+                                                          [FromForm] string projectId,
+                                                          [FromForm] ISet<string> speakerIds,
+                                                          [FromForm] IFormFile file)
         {
             // ensure all speakers have been enrolled
             var enrolledSpeakers = speakerIds.Where(sId => (from s in _context.SpeakerProfiles

@@ -21,8 +21,8 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="3.1.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.10" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.12" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.12" />
     <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.15.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.12" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.12" />
@@ -42,6 +42,8 @@
   <ItemGroup>
     <Compile Remove="Data\Migrations\20210305081733_ClipProjectDisambig.cs" />
     <Compile Remove="Data\Migrations\20210305081733_ClipProjectDisambig.Designer.cs" />
+    <Compile Remove="Data\Migrations\20210312010751_RecreateIdentitySchema.cs" />
+    <Compile Remove="Data\Migrations\20210312010751_RecreateIdentitySchema.Designer.cs" />
     <Compile Remove="Migrations\20210226001041_RenamePathAndIdColumns.cs" />
     <Compile Remove="Migrations\20210226001041_RenamePathAndIdColumns.Designer.cs" />
     <Compile Remove="Migrations\20210304063645_ProjectClipDisambiguation.cs" />
@@ -60,6 +62,8 @@
     <Compile Remove="Migrations\20210305081659_ClipProjectDisambig.Designer.cs" />
     <Compile Remove="Migrations\20210305084632_ClipProjectDisambig.cs" />
     <Compile Remove="Migrations\20210305084632_ClipProjectDisambig.Designer.cs" />
+    <Compile Remove="Migrations\20210312010824_RecreateIdentitySchema.cs" />
+    <Compile Remove="Migrations\20210312010824_RecreateIdentitySchema.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
