@@ -37,13 +37,15 @@ namespace MontageServer.Controllers
         /// <returns></returns>
         // POST: api/Requests
         [HttpPost]
-        public async Task<IActionResult> AnalyzeClip([FromForm] IFormFile file, 
-                                                     [FromForm] string projectId, 
-                                                     [FromForm] string clipId, 
-                                                     [FromForm] string userId, 
+        public async Task<IActionResult> AnalyzeClip([FromForm] IFormFile file,
+                                                     [FromForm] string projectId,
+                                                     [FromForm] string clipId,
+                                                     [FromForm] string userId,
                                                      [FromForm] string footagePath)
         {
-            // TODO: userId never checked!
+            // TODO: potentially remove clipId from form parameters, make clipId=file.GetHashCode() and return it in the AnalysisResult
+
+            // TODO: check userId!
 
             // IF clip == null or clip+project seen, collect from db
             // read from DB, get response if it exists
@@ -59,6 +61,7 @@ namespace MontageServer.Controllers
                 on a.ClipId equals c.ClipId
 
                 select c;
+
 
             if (clipId == null || query.Any())
             {
@@ -131,7 +134,7 @@ namespace MontageServer.Controllers
 
                     // load or make corresponding project
                     var project = FindProject(projectId);
-                    if(project == null)
+                    if (project == null)
                     {
                         project = new AdobeProject
                         {
@@ -164,24 +167,56 @@ namespace MontageServer.Controllers
                     return Ok(response);
 
                 }
-            
+
             }
         }
 
+        /// <summary>
+        /// Return array of clips which have been assigned to projects matching projectId 
+        /// which have users matching userId
+        /// </summary>
+        [HttpGet]
+        public async Task<IActionResult> GetClips(string userId, string projectId)
+        {
+            // TODO: check userId!
+            var query = await
+                (from p in _montageContext.AdobeProjects
+                 where p.ProjectId.Equals(projectId)
+                 join a in _montageContext.ClipAssignments
+                 on p.ProjectId equals a.ProjectId
+
+                 select a.Clip).Select(c => c.GetAnalysisResult()).ToListAsync();
+
+            return Ok(query);
+
+
+        }
+
+        /// <summary>
+        /// Attempt to find a project with the given projectId
+        /// </summary>
         private AdobeProject FindProject(string projectId)
         {
-            return (from p in _montageContext.AdobeProjects 
-                    where p.ProjectId.Equals(projectId) 
+            // TODO: include userId in parameters!
+            return (from p in _montageContext.AdobeProjects
+                    where p.ProjectId.Equals(projectId)
                     select p).FirstOrDefault();
         }
 
+        /// <summary>
+        /// Attempt to find a clip with the given clipId
+        /// </summary>
         private AdobeClip FindClip(string clipId)
         {
+            // Note: we *shouldn't* include project or user context here
             return (from c in _montageContext.AdobeClips
                     where c.ClipId.Equals(clipId)
                     select c).FirstOrDefault();
         }
 
+        /// <summary>
+        /// Attempt to find an assignment between projectId and clipId
+        /// </summary>
         private ClipAssignment FindAssignment(string projectId, string clipId)
         {
             return (from a in _montageContext.ClipAssignments
@@ -198,58 +233,6 @@ namespace MontageServer.Controllers
             // TODO: complete method
             return result;
         }
-
-        /// <summary>
-        /// Return array of clips which have been assigned to projects matching projectId 
-        /// which have users matching userId
-        /// </summary>
-        [HttpGet]
-        public async Task<IActionResult> GetClips(string userId, string projectId)
-        {
-            // TODO: not actually using the userId rn!
-            var query = await
-                (from p in _montageContext.AdobeProjects
-                 where p.ProjectId.Equals(projectId)
-                 join a in _montageContext.ClipAssignments
-                 on p.ProjectId equals a.ProjectId
-
-                 select a.Clip).Select(c=>c.GetAnalysisResult()).ToListAsync();
-
-            return Ok(query);
-
-
-        }
-
-        /// <summary>
-        ///// For backwards compatibility
-        ///// </summary>
-        //// POST: api/AudioResponse
-        //[Route("api/AudioResponse")]
-        //[HttpPost]
-        //public async Task<IActionResult> PostFormData([FromForm] IFormFile file, [FromForm] string projectId, [FromForm] string clipId, [FromForm] string footagePath)
-        //{
-        //    return await AnalyzeClip(file, projectId, clipId, _usersRolesContext.Users.FirstOrDefault().Id, footagePath);
-        //}
-
-        //// GET: api/AnalysisResults
-        //[HttpGet]
-        //public async Task<ActionResult<IEnumerable<AnalysisResult>>> GetAnalysisResult()
-        //{
-        //    return await _usersRolesContext.AnalysisResult.ToListAsync();
-        //}
-
-        //// GET: api/AnalysisResults/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<AnalysisResult>> GetAnalysisResult(string id)
-        //{
-        //    var audioResponse = await _usersRolesContext.AnalysisResult.FindAsync(id);
-
-        //    if (audioResponse == null)
-        //    {
-        //        return NotFound();
-        //    }
-
-        //    return audioResponse;
-        //}
     }
 }
+   
