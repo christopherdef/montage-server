@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Identity.Email;
 
 namespace MontageServer.Controllers
 {
@@ -26,10 +27,9 @@ namespace MontageServer.Controllers
             return View();
         }
 
-        public IActionResult Register()
-        {
-            return View();
-        }
+
+        public ViewResult Register() => View();
+
 
         [HttpPost]
         public async Task<IActionResult> Register(RegisterModel model)
@@ -46,9 +46,17 @@ namespace MontageServer.Controllers
 
                 if (result.Succeeded)
                 {
-                    await _signInManager.SignInAsync(user, isPersistent: false);
+                    var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                    var confirmationLink = Url.Action("ConfirmEmail", "Email", new { token, email = user.Email }, Request.Scheme);
+                    EmailHelper emailHelper = new EmailHelper();
+                    bool emailResponse = emailHelper.SendEmail(user.Email, confirmationLink);
 
-                    return RedirectToAction("index", "Home");
+                    if (emailResponse)
+                        return RedirectToAction("Index");
+                    else
+                    {
+                        // log email failed 
+                    }
                 }
 
                 foreach (var error in result.Errors)

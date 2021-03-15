@@ -4,15 +4,18 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using MontageServer.Data;
+using MontageServer.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebPWrecover.Services;
 
 namespace MontageServer
 {
@@ -36,16 +39,34 @@ namespace MontageServer
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
 
+
+
             // add views and razor support
             services.AddControllersWithViews();
             services.AddRazorPages();
 
             // add identity services
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<UsersRolesDbContext>();
-                //.AddRoleManager<RoleManager<IdentityRole>>()
-                //.AddUserManager<UserManager<IdentityUser>>();
+            //.AddRoleManager<RoleManager<IdentityRole>>()
+            //.AddUserManager<UserManager<IdentityUser>>();
+            services.Configure<DataProtectionTokenProviderOptions>(o =>
+            o.TokenLifespan = TimeSpan.FromDays(5));
+
+            services.AddTransient<IEmailSender, EmailSender>();
+            services.Configure<AuthMessageSenderOptions>(Configuration);
+
+
+            services.AddAuthentication()
+                .AddGoogle(options =>
+                {
+                    IConfigurationSection googleAuthNSection =
+                        Configuration.GetSection("Authentication:Google");
+
+                    options.ClientId = googleAuthNSection["ClientId"];
+                    options.ClientSecret = googleAuthNSection["ClientSecret"];
+                });
 
 
             // configure identity service options
