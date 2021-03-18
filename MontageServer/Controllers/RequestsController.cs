@@ -69,6 +69,7 @@ namespace MontageServer.Controllers
                 var result = (AnalysisResult.DeserializeResponse(clip.AnalysisResultString));
 
                 // only return currently stored result if the result wasn't errored out
+                // TODO: implement repair procedure!
                 if (result.Error)
                     result = RepairResult(result);
 
@@ -106,13 +107,25 @@ namespace MontageServer.Controllers
                         // if an audio file was sent, return transcript
                         if (file.ContentType.StartsWith("audio/"))
                         {
+                            var fileStream = file.OpenReadStream();
+                            try
+                            {
+                                fileStream = ConversionController.ConvertToWav(fileStream);
+                                //var buf = ((MemoryStream)fileStream).GetBuffer();
+                                //var f = System.IO.File.Create(@"C:\data\audio\t.wav", buf.Length);
+                                //f.Write(buf);
+                            }
+                            finally
+                            {
+                                // analyze converted audio
+                                // AnalysisController.TranscribeAudio(ref response, file);
+                                AnalysisController.AnalyzeAudio(ref response, fileStream);
+                            }
                             // TODO: file conversion - something like this vv
                             // using (var ffmpegConverter = new FfmpegConverter())
                             //    file = ffmpegConverter.convert(file, "wav");
 
-                            // analyze converted audio
-                            // AnalysisController.TranscribeAudio(ref response, file);
-                            AnalysisController.AnalyzeAudio(ref response, file);
+
                         }
                         else
                             AnalysisController.AnalyzeTranscript(ref response, file);
@@ -235,4 +248,4 @@ namespace MontageServer.Controllers
         }
     }
 }
-   
+

@@ -70,26 +70,26 @@ namespace MontageServer
             {
                 var services = scope.ServiceProvider;
 
-                try
-                {
+                //try
+                //{
                     
-                    var userRolesContext = services.GetRequiredService<UsersRolesDbContext>();
-                    var montageContext = services.GetRequiredService<MontageDbContext>();
-                    var manager = services.GetRequiredService<UserManager<IdentityUser>>();
-                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                //    var userRolesContext = services.GetRequiredService<UsersRolesDbContext>();
+                //    var montageContext = services.GetRequiredService<MontageDbContext>();
+                //    var manager = services.GetRequiredService<UserManager<IdentityUser>>();
+                //    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
 
-                    UsersRolesDbInitializer.Initialize(userRolesContext, manager, roleManager).Wait();
-                }
-                catch (Exception ex)
-                {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred while seeding the Users portion of the database.");
-                }
+                //    UsersRolesDbInitializer.Initialize(userRolesContext, manager, roleManager, services.GetRequiredService<ILogger<UsersRolesDbInitializer>>()).Wait();
+                //}
+                //catch (Exception ex)
+                //{
+                //    var logger = services.GetRequiredService<ILogger<Program>>();
+                //    logger.LogError(ex, "An error occurred while seeding the Users portion of the database.");
+                //}
 
                 try
                 {
                     var montageContext = services.GetRequiredService<MontageDbContext>();
-                    MontageDbInitializer.Initialize(montageContext);
+                    MontageDbInitializer.Initialize(montageContext, services.GetRequiredService<ILogger<MontageDbInitializer>>());
                 }
                 catch (Exception ex)
                 {

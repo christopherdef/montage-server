@@ -58,12 +58,11 @@ namespace MontageServer
             services.Configure<AuthMessageSenderOptions>(Configuration);
 
 
-            services.AddAuthentication()
+            services.AddAuthentication()    
                 .AddGoogle(options =>
                 {
                     IConfigurationSection googleAuthNSection =
                         Configuration.GetSection("Authentication:Google");
-
                     options.ClientId = googleAuthNSection["ClientId"];
                     options.ClientSecret = googleAuthNSection["ClientSecret"];
                 });
@@ -85,7 +84,7 @@ namespace MontageServer
                 options.Lockout.AllowedForNewUsers = true;
 
                 // User settings
-                //options.User.RequireUniqueEmail = true;
+                options.User.RequireUniqueEmail = true;
             });
 
 
@@ -102,8 +101,6 @@ namespace MontageServer
             {
                 options.MemoryBufferThreshold = int.MaxValue;
             });
-
-
 
         }
 
