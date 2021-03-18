@@ -50,7 +50,7 @@ namespace MontageServer.Controllers
 #else
             TranscribeAudio(ref response, audioFile);
 #endif
-            if (response.Transcript.Length  != 0)
+            if (response.Transcript.Length != 0)
             {
                 string transFileFn = Path.GetTempFileName();
                 using (StreamWriter sw = File.CreateText(transFileFn))
@@ -59,7 +59,7 @@ namespace MontageServer.Controllers
                 FormFile transcriptFile = new FormFile(File.OpenRead(transFileFn), 0, response.Transcript.Length, audioFile.Name, transFileFn);
                 AnalyzeTranscript(ref response, transcriptFile);
             }
-            
+
             return response;
         }
 
