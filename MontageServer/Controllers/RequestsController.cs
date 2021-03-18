@@ -24,7 +24,118 @@ namespace MontageServer.Controllers
             _usersRolesContext = usersRolesContext;
         }
 
+        /// <summary>
+        /// Given a new clip which either hasn't been seen or was processed incorrectly
+        /// Direct its file to the AnalysisController for analysis
+        /// Save the results in the database
+        /// Return the results to the caller
+        /// </summary>
+        private async Task<IActionResult> ProcessNewClip(IFormFile file, string projectId, string clipId, string userId, string footagePath)
+        {
+            if (file is null)
+                return StatusCode(StatusCodes.Status400BadRequest,
+                    new
+                    {
+                        message = $"Unable to find processed footage with id {projectId}/{clipId} for user {userId}\n" +
+                                     "(did you mean to send a file?)"
+                    });
 
+            HttpRequest currentRequest = HttpContext.Request;
+
+            // initialize empty response
+            AnalysisResult response = new AnalysisResult();
+            response.ClipId = clipId;
+            response.FootagePath = footagePath;
+
+            // process file in bg
+            try
+            {
+                await Task.Run(() =>
+                {
+                // if an audio file was sent, return transcript
+                if (file.ContentType.StartsWith("audio/"))
+                    {
+                        var fileStream = file.OpenReadStream();
+                        try
+                        {
+                        //fileStream = ConversionController.ConvertToWav(fileStream);
+                        //var buf = ((MemoryStream)fileStream).GetBuffer();
+                        //var f = System.IO.File.Create(@"C:\data\audio\converted.wav", buf.Length);
+                        //f.Write(buf);
+                    }
+                        finally
+                        {
+                        // analyze converted audio
+                        // AnalysisController.TranscribeAudio(ref response, file);
+                        AnalysisController.AnalyzeAudio(ref response, fileStream);
+                        }
+                    }
+                    else
+                        AnalysisController.AnalyzeTranscript(ref response, file);
+
+
+                });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                                          new
+                                          {
+                                              response = response,
+                                              message = $"(this shouldn't happen!) Error while analyzing clip (userId:{userId}//project:{projectId}//clip:{clipId})"+
+                                                           $"Exception:\n{e}"
+                                          }); ;
+            }
+
+            // load or make corresponding clip
+            var clip = FindClip(clipId);
+            if (clip == null)
+            {
+                clip = new AdobeClip
+                {
+                    ClipId = clipId,
+                    FootagePath = footagePath,
+                    AnalysisResultString = response.Serialize()
+                };
+                _montageContext.AdobeClips.Add(clip);
+                _montageContext.SaveChanges();
+            }
+
+            // load or make corresponding project
+            var project = FindProject(projectId);
+            if (project == null)
+            {
+                project = new AdobeProject
+                {
+                    ProjectId = projectId,
+                    UserId = userId
+                };
+                _montageContext.AdobeProjects.Add(project);
+                _montageContext.SaveChanges();
+            }
+
+            // load or make corresponding clip assignment
+            var assignment = FindAssignment(projectId, clipId);
+            if (assignment == null)
+            {
+                assignment = new ClipAssignment
+                {
+                    ProjectId = projectId,
+                    UserId = project.UserId,
+                    ClipId = clip.ClipId
+                };
+                _montageContext.ClipAssignments.Add(assignment);
+                _montageContext.SaveChanges();
+            }
+
+            await _montageContext.SaveChangesAsync();
+
+
+            response.ClipId = clipId;
+            response.FootagePath = footagePath;
+            return Ok(response);
+
+        }
         /// <summary>
         /// On receipt of POST request, upload the provided file to disk
         /// then, trigger file analysis script and await response.
@@ -43,15 +154,22 @@ namespace MontageServer.Controllers
                                                      [FromForm] string userId,
                                                      [FromForm] string footagePath)
         {
-            // TODO: potentially remove clipId from form parameters, make clipId=file.GetHashCode() and return it in the AnalysisResult
 
-            // TODO: check userId!
+            // clipId, projectId, and userId are required parameters
+            if (clipId is null || projectId is null || userId is null)
+            {
+                StatusCode(StatusCodes.Status400BadRequest,
+                                  new
+                                  {
+                                      message = $"clipId, projectId, and userId must all not be null!\n" +
+                                                   $"(userId:{userId}//project:{projectId}//clip:{clipId})"
+                                  });
+            }
 
-            // IF clip == null or clip+project seen, collect from db
             // read from DB, get response if it exists
             var query =
                 from p in _montageContext.AdobeProjects
-                where (p.ProjectId.Equals(projectId))
+                where (p.ProjectId.Equals(projectId) && p.UserId.Equals(userId))
                 join a in _montageContext.ClipAssignments
                 on p.ProjectId equals a.ProjectId
 
@@ -62,112 +180,67 @@ namespace MontageServer.Controllers
 
                 select c;
 
-
-            if (clipId == null || query.Any())
+            // IF clip+project seen, collect from db
+            if (query.Any())
             {
-                var clip = query.FirstOrDefault();
-                var result = (AnalysisResult.DeserializeResponse(clip.AnalysisResultString));
+                AdobeClip clip = query.FirstOrDefault();
+                AnalysisResult result = (AnalysisResult.DeserializeResponse(clip.AnalysisResultString));
 
-                // only return currently stored result if the result wasn't errored out
-                if (result.Error)
-                    result = RepairResult(result);
+                // if the result in the db has an error, delete it and try again
+                if (result is null || result.Error)
+                {
+                    // delete result from db
+                    try
+                    {
+                        _montageContext.AdobeClips.Remove(clip);
+                        _montageContext.SaveChanges();
+                    }
+                    catch (Exception e)
+                    {
+                        return StatusCode(StatusCodes.Status500InternalServerError,
+                                          new
+                                          {
+                                              message = $"(this shouldn't happen!) Unable to repair malformed clip (userId:{userId}//project:{projectId}//clip:{clipId})\n" +
+                                                           "Please try adding under another clipId\n" +
+                                                           $"Exception:\n{e}"
+                                          });
+                    }
 
-                // footagePath and clipId with update if provided
-                result.ClipId = clipId ?? result.ClipId;
-                result.FootagePath = footagePath ?? result.FootagePath;
+                    // re-add it
+                    return await ProcessNewClip(file, projectId, clipId, userId, footagePath);
+                }
+                else
+                {
+                    // return read from db
+                    // footagePath with update if provided
+                    result.FootagePath = footagePath ?? result.FootagePath;
 
-                clip.AnalysisResultString = result.Serialize();
+                    clip.AnalysisResultString = result.Serialize();
 
-                _montageContext.Update(clip);
-                await _montageContext.SaveChangesAsync();
+                    try
+                    {
+                        _montageContext.Update(clip);
+                        await _montageContext.SaveChangesAsync();
+                    }
+                    catch (Exception e)
+                    {
+                        // this REALLY should never happen
+                        return StatusCode(StatusCodes.Status500InternalServerError,
+                                          new
+                                          {
+                                              message = $"Unable to update clip with new footage path" +
+                                                           $"Exception:\n{e}"
+                                          });
+                    }
 
-                return Ok(result);
+                    return Ok(result);
+                }
             }
-
-            // ELIF no file was sent, and a clip couldn't be found, return empty response
-            else if (file is null)
-                return Ok(new { message = $"unable to find preprocessed footage with id {projectId}/{clipId} for user {userId}" });
-
-            // ELIF clip+project unseen, process file and add to db
+            // IF clip records were found and the result wasn't an error, return result
             else
             {
-                HttpRequest currentRequest = HttpContext.Request;
-
-                using (var sr = new StreamReader(file.OpenReadStream()))
-                {
-                    // initialize empty response
-                    AnalysisResult response = new AnalysisResult();
-                    response.ClipId = clipId;
-                    response.FootagePath = footagePath;
-
-                    // process file in bg
-                    await Task.Run(() =>
-                    {
-                        // if an audio file was sent, return transcript
-                        if (file.ContentType.StartsWith("audio/"))
-                        {
-                            // TODO: file conversion - something like this vv
-                            // using (var ffmpegConverter = new FfmpegConverter())
-                            //    file = ffmpegConverter.convert(file, "wav");
-
-                            // analyze converted audio
-                            // AnalysisController.TranscribeAudio(ref response, file);
-                            AnalysisController.AnalyzeAudio(ref response, file);
-                        }
-                        else
-                            AnalysisController.AnalyzeTranscript(ref response, file);
-                    });
-
-                    // load or make corresponding clip
-                    var clip = FindClip(clipId);
-                    if (clip == null)
-                    {
-                        clip = new AdobeClip
-                        {
-                            ClipId = clipId,
-                            FootagePath = footagePath,
-                            AnalysisResultString = response.Serialize()
-                        };
-                        _montageContext.AdobeClips.Add(clip);
-                        _montageContext.SaveChanges();
-                    }
-
-                    // load or make corresponding project
-                    var project = FindProject(projectId);
-                    if (project == null)
-                    {
-                        project = new AdobeProject
-                        {
-                            ProjectId = projectId,
-                            UserId = userId
-                        };
-                        _montageContext.AdobeProjects.Add(project);
-                        _montageContext.SaveChanges();
-                    }
-
-                    // load or make corresponding clip assignment
-                    var assignment = FindAssignment(projectId, clipId);
-                    if (assignment == null)
-                    {
-                        assignment = new ClipAssignment
-                        {
-                            ProjectId = projectId,
-                            UserId = project.UserId,
-                            ClipId = clip.ClipId
-                        };
-                        _montageContext.ClipAssignments.Add(assignment);
-                        _montageContext.SaveChanges();
-                    }
-
-                    await _montageContext.SaveChangesAsync();
-
-
-                    response.ClipId = clipId;
-                    response.FootagePath = footagePath;
-                    return Ok(response);
-
-                }
-
+                // add new clip to db
+                return await ProcessNewClip(file, projectId, clipId, userId, footagePath);
             }
         }
 
@@ -178,18 +251,30 @@ namespace MontageServer.Controllers
         [HttpGet]
         public async Task<IActionResult> GetClips(string userId, string projectId)
         {
-            // TODO: check userId!
-            var query = await
-                (from p in _montageContext.AdobeProjects
-                 where p.ProjectId.Equals(projectId)
-                 join a in _montageContext.ClipAssignments
-                 on p.ProjectId equals a.ProjectId
+            try
+            {
+                var query = await
+                    (from p in _montageContext.AdobeProjects
+                     where p.ProjectId.Equals(projectId) && p.UserId.Equals(userId)
+                     join a in _montageContext.ClipAssignments
+                     on p.ProjectId equals a.ProjectId
+                     select a.Clip).Select(c => c.GetAnalysisResult()).ToListAsync();
 
-                 select a.Clip).Select(c => c.GetAnalysisResult()).ToListAsync();
-
-            return Ok(query);
-
-
+                if (query.Any())
+                    return Ok(query);
+                else
+                    return StatusCode(StatusCodes.Status204NoContent,
+                                      new { message = $"No clips under user:{userId}/project:{projectId}" });
+            }
+            catch (Exception e)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError,
+                                  new
+                                  {
+                                      message = $"(idk what happened but it wasn't good!) Error collecting clips under user:{userId}/project:{projectId}\n" +
+                                                    $"Error:\n{e}"
+                                  });
+            }
         }
 
         /// <summary>
@@ -235,4 +320,4 @@ namespace MontageServer.Controllers
         }
     }
 }
-   
+

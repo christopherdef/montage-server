@@ -31,20 +31,34 @@ namespace MontageServer.Controllers
         private static SpeechConfig SPEECH_CONFIG = SpeechConfig.FromSubscription("77f35c60bef24e58bce1a0c0b9f4be65", "eastus");
 
 
+        /// <summary>
+        /// Fill the Transcript field within the provided AnalysisResult
+        /// </summary>
+        public static AnalysisResult AnalyzeAudio(ref AnalysisResult response, Stream audioStream)
+        {
+            var f = new FormFile(audioStream, 0, audioStream.Length, response.ClipId, response.FootagePath);
+            return AnalyzeAudio(ref response, f);
+        }
 
+        /// <summary>
+        /// Fill the Transcript field within the provided AnalysisResult
+        /// </summary>
         public static AnalysisResult AnalyzeAudio(ref AnalysisResult response, IFormFile audioFile)
         {
-#if (DEBUG)
+#if (!DEBUG)
             response.Transcript = Resources.sample_text;
 #else
             TranscribeAudio(ref response, audioFile);
 #endif
-            string transFileFn = Path.GetTempFileName();
-            using (StreamWriter sw = File.CreateText(transFileFn))
-                sw.Write(response.Transcript);
+            if (response.Transcript.Length != 0)
+            {
+                string transFileFn = Path.GetTempFileName();
+                using (StreamWriter sw = File.CreateText(transFileFn))
+                    sw.Write(response.Transcript);
 
-            FormFile transcriptFile = new FormFile(File.OpenRead(transFileFn), 0, response.Transcript.Length, audioFile.Name, transFileFn);
-            AnalyzeTranscript(ref response, transcriptFile);
+                FormFile transcriptFile = new FormFile(File.OpenRead(transFileFn), 0, response.Transcript.Length, audioFile.Name, transFileFn);
+                AnalyzeTranscript(ref response, transcriptFile);
+            }
 
             return response;
         }
@@ -118,6 +132,11 @@ namespace MontageServer.Controllers
                 //var recognitionResult = recognizer.StartContinuousRecognitionAsync();
                 var recognitionResult = recognizer.RecognizeOnceAsync();
                 recognitionResult.Wait();
+                if (!recognitionResult.Result.Reason.HasFlag(ResultReason.RecognizedSpeech | ResultReason.RecognizingSpeech))
+                {
+                    audioResponse.Error = true;
+                    audioResponse.ErrorMessages.Add($"Unable to recognize speech!\tReason Id:{recognitionResult.Result.Reason}");
+                }
                 audioResponse.Transcript = recognitionResult.Result.Text;
 
                 return audioResponse;
@@ -183,7 +202,7 @@ namespace MontageServer.Controllers
 
                 // try to get number of characters in response
                 if (!int.TryParse(rTrimmed.TakeWhile((c) => c != '\n').ToArray(), out int responseLength))
-                    throw new FormatException($"Unable to parse response length from response\n:{r}");
+                    throw new FormatException($"Unable to parse response length from response:\n{r}");
 
                 return string.Concat(rTrimmed.SkipWhile((c) => c != '\n')
                                              .Take(responseLength));

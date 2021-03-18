@@ -47,6 +47,10 @@ namespace MontageServer.Models
         [JsonProperty]
         public bool Error { get; set; } = false;
 
+        [JsonProperty]
+        [NotMapped]
+        public List<string> ErrorMessages { get; set; } = new List<string>();
+
 
         /// <summary>
         /// Deserialize the json AnalysisResult in a string
@@ -56,7 +60,7 @@ namespace MontageServer.Models
             var options = new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.All
-                
+
             };
 
             // deserialize json AnalysisResult from script
