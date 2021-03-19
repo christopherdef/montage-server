@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,10 @@ namespace MontageServer.Data
 {
     public class UsersRolesDbInitializer
     {
-        internal async static Task Initialize(UsersRolesDbContext context, UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        internal async static Task Initialize(UsersRolesDbContext context, 
+                                              UserManager<IdentityUser> userManager, 
+                                              RoleManager<IdentityRole> roleManager,
+                                              ILogger<UsersRolesDbInitializer> logger)
         {
             context.Database.Migrate();
 

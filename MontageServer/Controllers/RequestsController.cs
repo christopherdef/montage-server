@@ -48,44 +48,57 @@ namespace MontageServer.Controllers
             response.FootagePath = footagePath;
 
             // process file in bg
-            try
+            await Task.Run(() =>
             {
-                await Task.Run(() =>
-                {
+                var fileStream = file.OpenReadStream();
+
                 // if an audio file was sent, return transcript
                 if (file.ContentType.StartsWith("audio/"))
+                {
+                    try
                     {
-                        var fileStream = file.OpenReadStream();
-                        try
-                        {
-                        //fileStream = ConversionController.ConvertToWav(fileStream);
+                        if (!(file.ContentType.EndsWith("/wav")|| file.ContentType.EndsWith("/wave")))
+                            fileStream = ConversionController.ConvertToWav(fileStream, file.ContentType);
                         //var buf = ((MemoryStream)fileStream).GetBuffer();
                         //var f = System.IO.File.Create(@"C:\data\audio\converted.wav", buf.Length);
                         //f.Write(buf);
                     }
-                        finally
-                        {
+                    finally
+                    {
                         // analyze converted audio
                         // AnalysisController.TranscribeAudio(ref response, file);
                         AnalysisController.AnalyzeAudio(ref response, fileStream);
-                        }
+                        fileStream.Close();
                     }
-                    else
-                        AnalysisController.AnalyzeTranscript(ref response, file);
+                }
+                else if (file.ContentType.StartsWith("video/"))
+                {
+                    try
+                    {
+                        var vidPt = Path.GetTempFileName();
+                        var preAudPt = Path.GetTempFileName(); //@"C:\data\pre_tmp.wav";
+                        var postAudPt = Path.GetTempFileName(); //@"C:\data\tmp.wav";
+                        ConversionController.WriteStreamToDisk(fileStream, vidPt);
+                        fileStream = System.IO.File.OpenRead(vidPt);
 
+                        var splitStreams = ConversionController.SeparateAudioVideo(fileStream, file.ContentType);
+                        fileStream = splitStreams.audioStream;
 
-                });
-            }
-            catch (Exception e)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError,
-                                          new
-                                          {
-                                              response = response,
-                                              message = $"(this shouldn't happen!) Error while analyzing clip (userId:{userId}//project:{projectId}//clip:{clipId})"+
-                                                           $"Exception:\n{e}"
-                                          }); ;
-            }
+                        ConversionController.WriteStreamToDisk(fileStream, preAudPt);
+                        
+                        fileStream = ConversionController.ConvertToWavFiles(preAudPt, "");
+
+                        ConversionController.WriteStreamToDisk(fileStream, postAudPt);
+
+                        fileStream = System.IO.File.OpenRead(postAudPt);
+                    }
+                    finally
+                    {
+                        AnalysisController.AnalyzeAudio(ref response, fileStream);
+                        fileStream.Close();
+                    }
+                }
+            });
 
             // load or make corresponding clip
             var clip = FindClip(clipId);
@@ -136,6 +149,12 @@ namespace MontageServer.Controllers
             return Ok(response);
 
         }
+
+
+
+
+
+
         /// <summary>
         /// On receipt of POST request, upload the provided file to disk
         /// then, trigger file analysis script and await response.
