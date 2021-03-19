@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System.Resources;
 using MontageServer.Properties;
+using System.Threading;
 
 namespace MontageServer.Controllers
 {
@@ -55,7 +56,7 @@ namespace MontageServer.Controllers
                 string transFileFn = Path.GetTempFileName();
                 using (StreamWriter sw = File.CreateText(transFileFn))
                     sw.Write(response.Transcript);
-
+                
                 FormFile transcriptFile = new FormFile(File.OpenRead(transFileFn), 0, response.Transcript.Length, audioFile.Name, transFileFn);
                 AnalyzeTranscript(ref response, transcriptFile);
             }
@@ -127,20 +128,91 @@ namespace MontageServer.Controllers
 
                 } while (readBytes.Length > 0);
 
-                // call 
-                // TODO: start async recognition
-                //var recognitionResult = recognizer.StartContinuousRecognitionAsync();
-                var recognitionResult = recognizer.RecognizeOnceAsync();
-                recognitionResult.Wait();
-                if (!recognitionResult.Result.Reason.HasFlag(ResultReason.RecognizedSpeech | ResultReason.RecognizingSpeech))
-                {
-                    audioResponse.Error = true;
-                    audioResponse.ErrorMessages.Add($"Unable to recognize speech!\tReason Id:{recognitionResult.Result.Reason}");
-                }
-                audioResponse.Transcript = recognitionResult.Result.Text;
-
+                var transcript = ExecuteRecognizer(recognizer).Result;
+                audioResponse.Transcript = transcript;
                 return audioResponse;
             }
+        }
+
+        private static async Task<string> ExecuteRecognizer(SpeechRecognizer recognizer)
+        {
+            object noMatchLock = new object();
+            int consecutiveNoMatchCount = 0;
+
+            object transcriptLock = new object();
+            StringBuilder transcriptBuilder = new StringBuilder();
+
+            var stopRecognition = new TaskCompletionSource<int>();
+
+            recognizer.Recognizing += (s, e) =>
+            {
+                if (e.Result.Reason.HasFlag(ResultReason.RecognizedSpeech))
+                {
+                    consecutiveNoMatchCount = 0;
+
+                    lock (transcriptLock)
+                    {
+                        transcriptBuilder.Append(e.Result.Text);
+                        transcriptBuilder.Append('\n');
+                    }
+                }
+                else if (e.Result.Reason == ResultReason.NoMatch)
+                {
+                    lock (noMatchLock)
+                    {
+                        consecutiveNoMatchCount++;
+                        if (consecutiveNoMatchCount > 4)
+                            recognizer.StopContinuousRecognitionAsync();
+
+                    }
+                }
+            };
+
+            recognizer.Recognized += (s, e) =>
+            {
+                if (e.Result.Reason == ResultReason.RecognizedSpeech)
+                {
+                    consecutiveNoMatchCount = 0;
+                    lock (transcriptLock)
+                    {
+                        transcriptBuilder.Append(e.Result.Text);
+                    }
+                }
+                else if (e.Result.Reason == ResultReason.NoMatch)
+                {
+                    lock (noMatchLock)
+                    {
+                        consecutiveNoMatchCount++;
+                        if (consecutiveNoMatchCount > 4)
+                            recognizer.StopContinuousRecognitionAsync();
+
+                    }
+                }
+            };
+
+            recognizer.SessionStopped += (s, e) =>
+            {
+                stopRecognition.TrySetResult(0);
+            };
+
+            recognizer.Canceled += (s, e) =>
+            {
+                if (e.Reason == CancellationReason.Error)
+                {
+                    lock (transcriptLock)
+                    {
+                        transcriptBuilder.Append($"\nSPEECH RECOGNITION ERROR: {e.ErrorCode}\nDETAILS: {e.ErrorDetails}");
+                    }
+                }
+
+                stopRecognition.TrySetResult(0);
+            };
+
+            await recognizer.StartContinuousRecognitionAsync();
+            Task.WaitAny(new[] { stopRecognition.Task });
+            await recognizer.StopContinuousRecognitionAsync();
+            return transcriptBuilder.ToString();
+
         }
 
         /// <summary>
@@ -174,16 +246,6 @@ namespace MontageServer.Controllers
                     // activate Anaconda, if available
                     sw.WriteLine(CONDA_PATH ?? "");
                     sw.WriteLine($"{cmd} {args}");
-
-                    //sw.WriteLine("where py");
-                    //sw.WriteLine(@"C:\Windows\py.exe");
-                    //sw.WriteLine("import sys; sys.stderr = sys.stdout");
-                    //sw.WriteLine("import numpy");
-                    //sw.WriteLine("imfdsport numpy");
-                    //sw.WriteLine("print('hello world')");
-                    //sw.WriteLine("import pyBTM");
-                    //sw.WriteLine("print(pyBTM)");
-                    // run command with args
                 }
             }
 
@@ -202,7 +264,7 @@ namespace MontageServer.Controllers
 
                 // try to get number of characters in response
                 if (!int.TryParse(rTrimmed.TakeWhile((c) => c != '\n').ToArray(), out int responseLength))
-                    throw new FormatException($"Unable to parse response length from response:\n{r}");
+                        throw new FormatException($"Unable to parse response length from response:\n{r}");
 
                 return string.Concat(rTrimmed.SkipWhile((c) => c != '\n')
                                              .Take(responseLength));
