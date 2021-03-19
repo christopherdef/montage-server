@@ -188,7 +188,7 @@ namespace MontageServer.Controllers
             // read from DB, get response if it exists
             var query =
                 from p in _montageContext.AdobeProjects
-                where (p.ProjectId.Equals(projectId) && p.UserId.Equals(userId))
+                where (p.ProjectId.Equals(projectId))
                 join a in _montageContext.ClipAssignments
                 on p.ProjectId equals a.ProjectId
 
@@ -274,7 +274,7 @@ namespace MontageServer.Controllers
             {
                 var query = await
                     (from p in _montageContext.AdobeProjects
-                     where p.ProjectId.Equals(projectId) && p.UserId.Equals(userId)
+                     where p.ProjectId.Equals(projectId)
                      join a in _montageContext.ClipAssignments
                      on p.ProjectId equals a.ProjectId
                      select a.Clip).Select(c => c.GetAnalysisResult()).ToListAsync();

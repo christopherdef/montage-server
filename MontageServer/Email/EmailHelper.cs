@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mail;
@@ -8,6 +9,11 @@ namespace Identity.Email
 {
     public class EmailHelper
     {
+        ILogger _logger;
+        public EmailHelper(ILogger logger)
+        {
+            _logger = logger;
+        }
         public bool SendEmail(string userEmail, string confirmationLink)
         {
             MailMessage mailMessage = new MailMessage();
@@ -31,6 +37,7 @@ namespace Identity.Email
             catch (Exception ex)
             {
                 // log exception
+                _logger.LogError("Error sending email", ex);
             }
             return false;
         }

@@ -34,9 +34,9 @@ namespace MontageServer.Controllers
                                                        [FromForm] IEnumerable<IFormFile> files)
         {
             // check if speaker has already been enrolled
-            var query = (from s in _context.SpeakerProfiles
-                         where s.ProjectId.Equals(projectId)
-                         select s).FirstOrDefault();
+            var query = await (from s in _context.SpeakerProfiles
+                                 where s.ProjectId.Equals(projectId)
+                                 select s).FirstOrDefaultAsync();
 
             string modelPath = query?.ModelPath ?? Path.GetTempFileName();
 
@@ -72,7 +72,7 @@ namespace MontageServer.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetSegmentations([FromForm] string userId,
+        public IActionResult GetSegmentations([FromForm] string userId,
                                                           [FromForm] string projectId,
                                                           [FromForm] ISet<string> speakerIds,
                                                           [FromForm] IFormFile file)

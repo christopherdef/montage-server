@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Identity.Email;
+using Microsoft.Extensions.Logging;
 
 namespace MontageServer.Controllers
 {
@@ -14,12 +15,14 @@ namespace MontageServer.Controllers
     {
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-
+        private readonly ILogger<AccountController> _logger;
         public AccountController(UserManager<IdentityUser> userManager,
-                                      SignInManager<IdentityUser> signInManager)
+                                      SignInManager<IdentityUser> signInManager,
+                                      ILogger<AccountController> logger)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _logger = logger;
         }
 
         public IActionResult Index()
@@ -31,7 +34,7 @@ namespace MontageServer.Controllers
         public ViewResult Register() => View();
 
 
-        [HttpPost]
+        [HttpPost("Register")]
         public async Task<IActionResult> Register(RegisterModel model)
         {
             if (ModelState.IsValid)
@@ -48,7 +51,7 @@ namespace MontageServer.Controllers
                 {
                     var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                     var confirmationLink = Url.Action("ConfirmEmail", "Email", new { token, email = user.Email }, Request.Scheme);
-                    EmailHelper emailHelper = new EmailHelper();
+                    EmailHelper emailHelper = new EmailHelper(_logger);
                     bool emailResponse = emailHelper.SendEmail(user.Email, confirmationLink);
 
                     if (emailResponse)
@@ -56,6 +59,7 @@ namespace MontageServer.Controllers
                     else
                     {
                         // log email failed 
+                        _logger.LogError("Unable to send email confirmation to user.", user.Email);
                     }
                 }
 
@@ -76,13 +80,14 @@ namespace MontageServer.Controllers
         {
             return View();
         }
-        [HttpPost]
+
+        [HttpPost("Login")]
         [AllowAnonymous]
-        public async Task<IActionResult> Login(LoginModel user)
+        public async Task<IActionResult> Login(LoginModel loginUser)
         {
             if (ModelState.IsValid)
             {
-                var result = await _signInManager.PasswordSignInAsync(user.Input.Email, user.Input.Password, user.Input.RememberMe, false);
+                var result = await _signInManager.PasswordSignInAsync(loginUser.Input.Email, loginUser.Input.Password, loginUser.Input.RememberMe, false);
 
                 if (result.Succeeded)
                 {
@@ -92,7 +97,7 @@ namespace MontageServer.Controllers
                 ModelState.AddModelError(string.Empty, "Invalid Login Attempt");
 
             }
-            return View(user);
+            return View(loginUser);
         }
     }
 }

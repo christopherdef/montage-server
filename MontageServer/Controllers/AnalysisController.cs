@@ -46,7 +46,8 @@ namespace MontageServer.Controllers
         /// </summary>
         public static AnalysisResult AnalyzeAudio(ref AnalysisResult response, IFormFile audioFile)
         {
-#if (!DEBUG)
+
+#if (DEBUG)
             response.Transcript = Resources.sample_text;
 #else
             TranscribeAudio(ref response, audioFile);

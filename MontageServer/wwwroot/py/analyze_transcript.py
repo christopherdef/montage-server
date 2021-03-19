@@ -53,6 +53,7 @@ def analyze_transcript(response, transcript_pt):
 def get_sentiments(transcript):
     sentiments = []
     
+    # TODO: s(wi) = avg(s(wi), s(w_i-2, w_i-1, wi), s(w_i-1, wi, w_i+1), s(wi, w_i+1, w_i+2))
     for w in transcript.split():
         s = sia.polarity_scores(w)
         sentiments.append(s['pos'] if s['pos'] >= s['neg'] else -s['neg'])
