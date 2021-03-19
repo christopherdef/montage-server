@@ -40,8 +40,9 @@ def analyze_transcript(response, transcript_pt):
     @param response : Response object with a loaded transcript
     @return : Response object with loaded topics, individuals, objects, & sentiments
     '''
-    
-    response.transcript = open(transcript_pt, 'r', encoding='utf8').read()
+    transcript_file_read = open(transcript_pt, 'r', encoding='utf8')
+    response.transcript = transcript_file_read.read()
+    transcript_file_read.close()
     response.topics =   get_topics(response.transcript)
     response.individuals = ["a", "b"]
     response.objects = ["o1", "o2"]
@@ -59,10 +60,29 @@ def get_sentiments(transcript):
     return sentiments
     
 def get_topics(transcript):
+    sentences = transcript.split('\n')
+    if len(transcript.split(' ')) <= 5:
+        return {}
     pp_txt = []
-    for line in transcript.split('\n'):
-        pp_txt.append(' '.join(preprocess(line)))
+    for line in sentences:
+        pp_token = ' '.join(preprocess(line))
+        if len(pp_token) > 0:
+            pp_txt.append(pp_token)
+
+    # too harsh, use softer preprocess
+    if len(pp_txt) == 0:
+        for line in sentences:
+            pp_token = ' '.join(preprocess(line))
+        if len(pp_token) > 0:
+            pp_txt.append(pp_token)
     
+    # still too harsh
+    if len(pp_txt) == 0:
+        pp_txt = transcript.casefold().split('\n')
+    
+    # no topics can be found in provided text!
+    if len(pp_txt) == 0:
+        return {}
     # temporary attempt to use cosine sim on word vectors
     #naive_topics = {}
     #nlp_pp_txt = nlp(pp_txt)
@@ -70,7 +90,9 @@ def get_topics(transcript):
     
 
     tmpf = tempfile.NamedTemporaryFile(mode='r+', delete=False, encoding='utf8')
+    # print(f"topic tmp file: {tmpf.name}", file=sys.stdout)
     tmpf.write(('\n'.join(pp_txt)))
+    tmpf.flush()
     tmpf.seek(0)
     tmpf.close()
 
@@ -89,6 +111,22 @@ def get_topics(transcript):
     L = 5
     topics = btm.get_topics(include_likelihood=False, use_words=True, L=L)
     return topics
+
+def soft_preprocess(text_line):
+    '''
+    Softer data preprocessing step
+    '''
+    # case fold
+    text = text_line.casefold()
+
+    # filter for puntuation, and stubs
+    inclusion_condition = lambda w : w.is_alpha and\
+                                     w not in punc and\
+                                     len(w) >= 2
+
+    # apply filter, lemmatize
+    pp_txt = [*filter(lambda w : inclusion_condition(w), text)]
+    return pp_txt
 
 def preprocess(text_line):
     '''
@@ -109,7 +147,6 @@ def preprocess(text_line):
 
     # apply filter, lemmatize
     pp_txt = [tok.lemma_ for tok in filter(lambda w : inclusion_condition(w), tokenized_text)]
-
     return pp_txt
 
 def main(_id, transcript_pt):

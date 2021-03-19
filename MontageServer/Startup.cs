@@ -1,3 +1,4 @@
+using FFMpegCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
@@ -24,6 +25,7 @@ namespace MontageServer
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
         }
 
         public IConfiguration Configuration { get; }
@@ -31,6 +33,8 @@ namespace MontageServer
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            
+
             // connect to database with both contexts 
             services.AddDbContext<MontageDbContext>(options =>
                 options.UseSqlServer(
@@ -100,6 +104,13 @@ namespace MontageServer
             services.Configure<FormOptions>(options =>
             {
                 options.MemoryBufferThreshold = int.MaxValue;
+            });
+
+            // configure FFMpegCore options
+            GlobalFFOptions.Configure(options =>
+            {
+                options.BinaryFolder = Environment.GetEnvironmentVariable("FFMPEG_PATH");
+                options.TemporaryFilesFolder = Environment.GetEnvironmentVariable("FFMPEG_TMP");
             });
 
         }
