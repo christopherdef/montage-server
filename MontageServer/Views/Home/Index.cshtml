@@ -1,15 +1,104 @@
-﻿<style>
-    .logo {
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-    }
-</style>
-<div class="row">
-    <img src="~/Montage_Logo.png" alt="Montage Logo" class="logo" width="500px" />
-</div>
-<div class="">
-    <p style="text-align:center">Query our API at @Html.ActionLink("montageapp.azurewebsites.net/Home/APIView", "APIView", "Home", new { area = "" }, null)</p>
-</div>
+﻿<!DOCTYPE HTML>
+
+<html>
+<head>
+    <title>Montage</title>
+    <link rel="stylesheet" href="assets/css/main.css" />
+</head>
+<body>
+
+    <!-- Header -->
+    <header id="header">
+        <h1>@Html.ActionLink("Montage", "Index")</h1>
+        <a href="#menu">Menu</a>
+    </header>
+
+    <!-- Nav -->
+    <nav id="menu">
+        <ul class="links">
+            <li class="selected">@Html.ActionLink("Index", "Index")</li>
+            <li><a href="https://app.swaggerhub.com/apis/Montage1/ServerAPI/1.0.0" target="_blank">API</a></li>
+            <li><a href="/Identity/Account/Login">Login</a></li>
+            <li>@Html.ActionLink("Contact", "Contact")</li>
+        </ul>
+    </nav>
+
+    <!-- Banner -->
+    <!--
+        To use a video as your background, set data-video to the name of your video without
+        its extension (eg. images/banner). Your video must be available in both .mp4 and .webm
+        formats to work correctly.
+    -->
+    <section id="banner" data-video="images/Montage-Logo-Gif">
+        <div class="inner">
+            <header>
+                <h1></h1>
+                <p>
+                    <br /><br /><br /><br /><br /><br /><br /><br />
+                </p>
+            </header>
+            <a href="#main" class="button2 big alt scrolly">Learn More</a>
+        </div>
+
+    </section>
+
+    <!-- Main -->
+    <div id="main">
+
+        <!-- One -->
+        <section class="wrapper style1">
+            <div class="inner">
+                <header class="align-center">
+                    <h2>Faster, Smarter Video Editing Solutions</h2>
+                    <p class="description">
+                        Video editing hasn't changed much since the early 1900's. Until Now.
+                        <br>Montage is a powerful Adobe Premiere Pro extension that empowers users to take control of their footage.
+                    </p>
+                </header>
+                <!-- 2 Column Video Section -->
+                <div class="flex flex-2">
+                    <div class="video col">
+                        <div class="image fit">
+                            <img src="~/images/search.png" alt="" />
+                            
+                        </div>
+                        <p class="caption">
+                            Take Control of Your Footage
+                        </p>
+                        <p class="description">
+                            Quickly create, edit, and review your project with our innovative Storyboard system.
+                        </p>
+                        <a href="generic.html" class="link"><span>Click Me</span></a>
+                    </div>
+                    <div class="video col">
+                        <div class="image fit">
+                            <img src="images/FootageSearchGif.gif" alt="" />
+                           
+                        </div>
+
+                        <p class="caption">
+                            Find the Right Clip Everytime
+                        </p>
+
+                        <p class="description">
+                            Use the Spotlight feature to earch for phrases, objects, and speakers using our powerful A.I. technology .
+                        </p>
+                        </p>
+                        <a href="generic.html" class="link"><span>Click Me</span></a>
+                    </div>
+                </div>
+            </div>
+        </section>
 
 
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/jquery.scrolly.min.js"></script>
+        <script src="assets/js/skel.min.js"></script>
+        <script src="assets/js/util.js"></script>
+        <script src="assets/js/main.js"></script>
+        <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="/js/site.js?v=4q1jwFhaPaZgr8WAUSrux6hAuh0XDg9kPS3xIVq36I0"></script>
+    </div>
+
+</body>
+</html>
