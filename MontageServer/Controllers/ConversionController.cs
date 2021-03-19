@@ -58,13 +58,33 @@ namespace MontageServer.Controllers
             // ffmpeg -y -i inputStream -map 0:a -c:a copy -f:a adts outputStream -y
             
             var tmpIn = Path.GetTempFileName();
-            var tmpAud = Path.GetTempFileName() + ".aac";
+            var tmpAud = Path.GetTempFileName();
             var tmpVid = Path.GetTempFileName();
+
+            var vidFmt = mimeType.Substring(mimeType.IndexOf('/')+1);
+            var audFmt = "adts";
+            switch (vidFmt)
+            {
+                case "mp4":
+                case "mov":
+                    audFmt = "adts";
+                    break;
+                case "x-ms-wmv":
+                    audFmt = "wav";
+                    break;
+                case "x-msvideo":
+                    audFmt = "mp3";
+                    break;
+                case "webm":
+                    audFmt = "opus";
+                    break;
+            }
+            
             WriteStreamToDisk(inputStream, tmpIn);
             FFMpegArguments
                 .FromFileInput(tmpIn)
                 .OutputToFile(tmpAud, true, options => options
-                    .WithCustomArgument("-map 0:a -c:a copy -f:a adts")
+                    .WithCustomArgument($"-map 0:a -c:a copy -f:a {audFmt}")
                     )
                 .ProcessSynchronously();
             

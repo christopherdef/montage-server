@@ -1,3 +1,4 @@
+using FFMpegCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -69,22 +70,22 @@ namespace MontageServer
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
+                var logger = services.GetRequiredService<ILogger<Program>>();
 
-                //try
-                //{
-                    
-                //    var userRolesContext = services.GetRequiredService<UsersRolesDbContext>();
-                //    var montageContext = services.GetRequiredService<MontageDbContext>();
-                //    var manager = services.GetRequiredService<UserManager<IdentityUser>>();
-                //    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                try
+                {
 
-                //    UsersRolesDbInitializer.Initialize(userRolesContext, manager, roleManager, services.GetRequiredService<ILogger<UsersRolesDbInitializer>>()).Wait();
-                //}
-                //catch (Exception ex)
-                //{
-                //    var logger = services.GetRequiredService<ILogger<Program>>();
-                //    logger.LogError(ex, "An error occurred while seeding the Users portion of the database.");
-                //}
+                    var userRolesContext = services.GetRequiredService<UsersRolesDbContext>();
+                    var montageContext = services.GetRequiredService<MontageDbContext>();
+                    var manager = services.GetRequiredService<UserManager<IdentityUser>>();
+                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+                    UsersRolesDbInitializer.Initialize(userRolesContext, manager, roleManager, services.GetRequiredService<ILogger<UsersRolesDbInitializer>>()).Wait();
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "An error occurred while seeding the Users portion of the database.");
+                }
 
                 try
                 {
@@ -93,8 +94,21 @@ namespace MontageServer
                 }
                 catch (Exception ex)
                 {
-                    var logger = services.GetRequiredService<ILogger<Program>>();
                     logger.LogError(ex, "An error occurred creating the Montage DB.");
+                }
+
+                try
+                {
+                    // configure FFMpegCore options
+                    GlobalFFOptions.Configure(options =>
+                    {
+                        options.BinaryFolder = Environment.GetEnvironmentVariable("FFMPEG_PATH");
+                        options.TemporaryFilesFolder = Environment.GetEnvironmentVariable("FFMPEG_TMP");
+                    });
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "An error occurred configuring FFMpegCore");
                 }
             }
         }

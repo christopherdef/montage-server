@@ -106,13 +106,6 @@ namespace MontageServer
                 options.MemoryBufferThreshold = int.MaxValue;
             });
 
-            // configure FFMpegCore options
-            GlobalFFOptions.Configure(options =>
-            {
-                options.BinaryFolder = Environment.GetEnvironmentVariable("FFMPEG_PATH");
-                options.TemporaryFilesFolder = Environment.GetEnvironmentVariable("FFMPEG_TMP");
-            });
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -76,11 +76,11 @@ namespace MontageServer.Controllers
                     try
                     {
                         var vidPt = Path.GetTempFileName();
-                        var preAudPt = @"C:\data\pre_tmp.wav";
-                        var postAudPt = @"C:\data\tmp.wav";
+                        var preAudPt = Path.GetTempFileName(); //@"C:\data\pre_tmp.wav";
+                        var postAudPt = Path.GetTempFileName(); //@"C:\data\tmp.wav";
                         ConversionController.WriteStreamToDisk(fileStream, vidPt);
-
                         fileStream = System.IO.File.OpenRead(vidPt);
+
                         var splitStreams = ConversionController.SeparateAudioVideo(fileStream, file.ContentType);
                         fileStream = splitStreams.audioStream;
 

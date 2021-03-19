@@ -153,6 +153,7 @@ namespace MontageServer.Controllers
                     lock (transcriptLock)
                     {
                         transcriptBuilder.Append(e.Result.Text);
+                        transcriptBuilder.Append(' ');
                         transcriptBuilder.Append('\n');
                     }
                 }
@@ -176,6 +177,8 @@ namespace MontageServer.Controllers
                     lock (transcriptLock)
                     {
                         transcriptBuilder.Append(e.Result.Text);
+                        transcriptBuilder.Append(' ');
+                        transcriptBuilder.Append('\n');
                     }
                 }
                 else if (e.Result.Reason == ResultReason.NoMatch)
