@@ -10,6 +10,8 @@ namespace MontageServer.Areas.Identity.Pages.Account.Manage
     {
         public static string Index => "Index";
 
+        public static string Contact => "Contact";
+
         public static string Email => "Email";
 
         public static string ChangePassword => "ChangePassword";
@@ -25,6 +27,8 @@ namespace MontageServer.Areas.Identity.Pages.Account.Manage
         public static string TwoFactorAuthentication => "TwoFactorAuthentication";
 
         public static string IndexNavClass(ViewContext viewContext) => PageNavClass(viewContext, Index);
+
+        public static string ContactNavClass(ViewContext viewContext) => PageNavClass(viewContext, Contact);
 
         public static string EmailNavClass(ViewContext viewContext) => PageNavClass(viewContext, Email);
 
