@@ -105,6 +105,9 @@ namespace MontageServer.Controllers
         /// </summary>
         public static AnalysisResult TranscribeAudio(ref AnalysisResult audioResponse, IFormFile audioFile)
         {
+            // needed for speaker diarization to resolve at the word level
+            SPEECH_CONFIG.RequestWordLevelTimestamps();
+
             var audioFormat128 = AudioStreamFormat.GetWaveFormatPCM(8000, 16, 1);
             var audioFormat256 = AudioStreamFormat.GetWaveFormatPCM(16000, 16, 1);
 
@@ -135,6 +138,10 @@ namespace MontageServer.Controllers
             }
         }
 
+        /// <summary>
+        /// Performs asynchronous speech recognition for long audio clips
+        /// Requires a SpeechRecognizer which has been preloaded with data
+        /// </summary>
         private static async Task<string> ExecuteRecognizer(SpeechRecognizer recognizer)
         {
             object noMatchLock = new object();
