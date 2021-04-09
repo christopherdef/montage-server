@@ -17,7 +17,6 @@
   <ItemGroup>
     <None Include="Areas\Identity\Pages\Account\Contact.cshtml" />
     <None Include="Views\Home\Contact.cshtml" />
-    <None Include="Views\Home\Index.cshtml" />
     <None Include="wwwroot\assets\fonts\fontawesome-webfont.svg" />
     <None Include="wwwroot\assets\fonts\fontawesome-webfont.woff2" />
     <None Include="wwwroot\assets\js\jquery.min.js" />
@@ -78,12 +77,6 @@
     <Compile Remove="Migrations\20210305084632_ClipProjectDisambig.Designer.cs" />
     <Compile Remove="Migrations\20210312010824_RecreateIdentitySchema.cs" />
     <Compile Remove="Migrations\20210312010824_RecreateIdentitySchema.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="Areas\Identity\Pages\Account\Contact.cshtml" />
-    <Content Remove="Views\Home\Contact.cshtml" />
-    <Content Remove="Views\Home\Index.cshtml" />
   </ItemGroup>
 
   <ItemGroup>
