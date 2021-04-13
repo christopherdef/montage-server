@@ -2357,6 +2357,7 @@ input[type="radio"]:focus + label:before {
 
     .image.left, .image.right {
         max-width: 40%;
+        
     }
 
         .image.left img, .image.right img {
