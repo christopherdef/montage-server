@@ -28,6 +28,15 @@ namespace MontageServer.Controllers
             return View();
         }
 
+        public IActionResult About()
+        {
+            return View();
+        }
+        public IActionResult Tutorial()
+        {
+            return View();
+        }
+
         public IActionResult Privacy()
         {
             return View();

@@ -16,6 +16,8 @@
   <ItemGroup>
     <None Include="Areas\Identity\Pages\Account\Contact.cshtml" />
     <None Include="Views\Home\Contact.cshtml" />
+    <None Include="Views\Home\About.cshtml" />
+    <None Include="Views\Home\Tutorial.cshtml" />
     <None Include="wwwroot\assets\fonts\fontawesome-webfont.svg" />
     <None Include="wwwroot\assets\fonts\fontawesome-webfont.woff2" />
     <None Include="wwwroot\assets\js\jquery.min.js" />

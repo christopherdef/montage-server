@@ -16,9 +16,11 @@
     <!-- Nav -->
     <nav id="menu">
         <ul class="links">
-            <li class="selected">@Html.ActionLink("Index", "Index")</li>
-            <li><a href="https://app.swaggerhub.com/apis/Montage1/ServerAPI/1.0.0" target="_blank">API</a></li>
+            <li class="selected">@Html.ActionLink("Home", "Index")</li>
             <li><a href="/Identity/Account/Login">Login</a></li>
+            <li>@Html.ActionLink("About", "About")</li>
+            <li>@Html.ActionLink("Tutorial", "Tutorial")</li>
+            <li><a href="https://app.swaggerhub.com/apis/Montage1/ServerAPI/1.0.0" target="_blank">API</a></li>
             <li>@Html.ActionLink("Contact", "Contact")</li>
         </ul>
     </nav>
@@ -37,7 +39,7 @@
                     <br /><br /><br /><br /><br /><br /><br /><br />
                 </p>
             </header>
-            <a href="#main" class="button2 big alt scrolly">Learn More</a>
+            <a href="#maininner" class="button2 big alt scrolly">Learn More</a>
         </div>
 
     </section>
@@ -47,18 +49,20 @@
 
         <!-- One -->
         <section class="wrapper style1">
-            <div class="inner">
+            <div id="maininner" class="inner">
                 <header class="align-center">
                     <h2>Faster, Smarter Video Editing Solutions</h2>
-                    <p class="description">
+
+                    <p class="caption" style="font-size:25px">
                         Video editing hasn't changed much since the early 1900's. Until Now.
                         <br>Montage is a powerful Adobe Premiere Pro extension that empowers users to take control of their footage.
                     </p>
+
                 </header>
                 <!-- 2 Column Video Section -->
                 <div class="flex flex-2">
                     <div class="video col">
-                        <div class="image fit">
+                        <div class="image fit-fit">
                             <img src="~/images/search.png" alt="" />
 
                         </div>
@@ -66,12 +70,12 @@
                             Take Control of Your Footage
                         </p>
                         <p class="description">
-                            Quickly create, edit, and review your project with our innovative Storyboard system.
+                            Quickly create, edit, and review your project with our innovative <b>Storyboard</b> feature.
                         </p>
-                        <a href="generic.html" class="link"><span>Click Me</span></a>
+                        <a class="link"><span>Click Me</span></a>
                     </div>
                     <div class="video col">
-                        <div class="image fit">
+                        <div class="image fit-fit">
                             <img src="images/FootageSearchGif.gif" alt="" />
 
                         </div>
@@ -81,16 +85,22 @@
                         </p>
 
                         <p class="description">
-                            Use the Spotlight feature to earch for phrases, objects, and speakers using our powerful A.I. technology .
+                            Use the <b>Spotlight</b> feature to search for phrases, objects, and speakers using our powerful A.I. technology .
                         </p>
-                        
-                        <a href="generic.html" class="link"><span>Click Me</span></a>
+
+                        <a class="link"><span>Click Me</span></a>
                     </div>
+                </div>
+                <div style="text-align:center">
+                    <a href="/Home/About" class="button2 big alt">About</a>
                 </div>
             </div>
         </section>
-
-
+        <!-- Main
+        <div style="text-align:center">
+            <h2 id="content" text-align:"center">Contact</h2>
+        </div>
+            -->
         <script src="assets/js/jquery.min.js"></script>
         <script src="assets/js/jquery.scrolly.min.js"></script>
         <script src="assets/js/skel.min.js"></script>

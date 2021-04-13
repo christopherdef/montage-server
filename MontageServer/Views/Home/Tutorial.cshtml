@@ -1,0 +1,78 @@
+﻿<!DOCTYPE HTML>
+
+<html>
+<head>
+    <title>Montage</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="assets/css/main.css" />
+
+</head>
+<body class="subpage">
+
+    <header id="header">
+        <h1>@Html.ActionLink("Montage", "Index")</h1>
+        <a href="#menu">Menu</a>
+    </header>
+
+    <!-- Nav -->
+    <nav id="menu">
+        <ul class="links">
+            <li>@Html.ActionLink("Home", "Index")</li>
+            <li><a href="/Identity/Account/Login">Login</a></li>
+            <li>@Html.ActionLink("About", "About")</li>
+            <li class="selected">@Html.ActionLink("Tutorial", "Tutorial")</li>
+            <li><a href="https://app.swaggerhub.com/apis/Montage1/ServerAPI/1.0.0" target="_blank">API</a></li>
+            <li> @Html.ActionLink("Contact", "Contact")</li>
+        </ul>
+    </nav>
+
+
+    <div id="main">
+
+        <!-- One -->
+        <section class="wrapper style1">
+            <div class="inner">
+                <!--
+                <header class="align-center">
+                    <h2>Montage</h2>
+                </header>
+                        -->
+                <header class="align-center">
+                    <h2>
+                        Search, Edit, Redefine
+                    </h2>
+                </header>
+                <div class="video">
+                    <div class="video-wrapper">
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/UXRNeHgKlKQ" frameborder="0" allowfullscreen></iframe>
+                    </div>
+                </div>
+
+                <p>
+                    Video editors often work with huge libraries of footage to create memorable and entertaining experiences. Any movie theatre blockbuster with a 90 minute runtime started out as several thousands of hours of chaotic, disorganized footage spread over a dozen hard drives. Cutting and labeling a video or movie from those clips is a monumental task. For editors, the biggest time sink comes from two problems: editors don’t know what’s in a clip until they watch it, and editors have limited human memory. Editors are asked to fix these problems by wasting their hours away watching and rewatching footage. These massive video reviews take away valuable time editors could otherwise be using to edit the footage they have. Given the complex, tedious, and often inefficient nature of video review and editing, we present a simple and elegant solution: Montage.
+                </p>
+                <p>
+                    Montage is an Adobe Premiere extension created to streamline the editing process in two important  ways. First, Montage incorporates the best of modern speech-to-text and information retrieval technology to instantly find footage corresponding to sentences, individuals, or topics and efficiently captions and tags each second of footage. Montage provides all the tools needed to know the footage inside and out and, in turn, makes for better editing and happier editors. However, all this rich and concise information would go to waste without Montage’s second unique feature: the integrated timeline video editor. The Montage extension will allow users to rearrange, cut, and delete parts of the transcript and have those changes reflect in the premier timeline, allowing an editor to edit footage without even touching the video. On top of that, Montage’s quick clip preview would enable an editor to drag and drop various clips of footage directly onto their timeline. Montage’s accessible interface and powerful features make it a valuable resource for editors working on any project.
+                </p>
+            </div>
+        </section>
+
+        <!-- Three -->
+      
+
+    </div>
+
+    <!-- Main -->
+    <!-- Scripts -->
+
+    <script src="../assets/js/jquery.min.js"></script>
+    <script src="../assets/js/jquery.scrolly.min.js"></script>
+    <script src="../assets/js/skel.min.js"></script>
+    <script src="../assets/js/util.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/site.js?v=4q1jwFhaPaZgr8WAUSrux6hAuh0XDg9kPS3xIVq36I0"></script>
+
+</body>
+</html>
