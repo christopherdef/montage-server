@@ -17,10 +17,24 @@
     <nav id="menu">
         <ul class="links">
             <li class="selected">@Html.ActionLink("Home", "Index")</li>
-            <li><a href="/Identity/Account/Login">Login</a></li>
             <li>@Html.ActionLink("About", "About")</li>
             <li>@Html.ActionLink("Tutorial", "Tutorial")</li>
             <li><a href="https://app.swaggerhub.com/apis/Montage1/ServerAPI/1.0.0" target="_blank">API</a></li>
+
+            @if (signInManager.IsSignedIn(User))
+            {
+                <li>
+                    @Html.ActionLink("My Account", "Account")
+                </li>
+
+
+            }
+            else
+            {
+                <li><a href="/Identity/Account/Login">Login</a></li>
+            }
+
+
             <li>@Html.ActionLink("Contact", "Contact")</li>
         </ul>
     </nav>
@@ -112,3 +126,7 @@
 
 </body>
 </html>
+
+    @ViewBag.user
+
+

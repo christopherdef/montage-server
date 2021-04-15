@@ -1,7 +1,5 @@
-﻿@page
-@model ForgotPasswordModel
+﻿<!DOCTYPE HTML>
 
-    <h1>@ViewData["Title"]</h1>
 <html>
 <head>
     <title>Montage</title>
@@ -19,19 +17,25 @@
     <nav id="menu">
         <ul class="links">
             <li>@Html.ActionLink("Home", "Index")</li>
+
             <li>@Html.ActionLink("About", "About")</li>
             <li>@Html.ActionLink("Tutorial", "Tutorial")</li>
             <li><a href="https://app.swaggerhub.com/apis/Montage1/ServerAPI/1.0.0" target="_blank">API</a></li>
             <li class="selected"><a href="/Identity/Account/Login">Account</a></li>
-
             <li>@Html.ActionLink("Contact", "Contact")</li>
         </ul>
     </nav>
 
+
+
+
+
+    <h1>@ViewData["Title"]</h1>
+
     <section class="wrapper ">
         <div class="inner">
 
-            <div class="row" >
+            <div class="row">
                 <section>
                     <div class="image fit-2">
                         <img src="~/images/pill.png" alt="montage-logo.png" />
@@ -43,29 +47,38 @@
         </div>
     </section>
 
+
     <div class="row" style="width:800px; margin:0 auto;">
- 
+        <p>
+            @ViewBag.user
+        </p>
 
+       
         <div class="col-md-4" style="font-size:18px">
+            <section class="contact-page">
 
-            <h4><br />Enter your email.</h4>
+                @Html.ActionLink("Transcripts and Stuff, clicking this breaks everything when running locally", "AccountIndex")
 
-            <form method="post">
-                <div asp-validation-summary="All" class="text-danger"></div>
-                <div class="form-group">
-                    <label asp-for="Input.Email"></label>
-                    <input asp-for="Input.Email" class="form-control" />
-                    <span asp-validation-for="Input.Email" class="text-danger"></span>
+
+            </section>
+        </div>
+        <div class="col-md-6 col-md-offset-2" style="font-size:18px">
+            <section>
+                <div>
+
+                    <form method="post" asp-action="logout" asp-controller="account">
+                        <input type="submit" value="Logout" />
+                    </form>
                 </div>
-                <br />
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
+            </section>
         </div>
     </div>
 
     @section Scripts {
         <partial name="_ValidationScriptsPartial" />
     }
+
+
 
     <script src="../../../assets/js/jquery.min.js"></script>
     <script src="../../../assets/js/jquery.scrolly.min.js"></script>

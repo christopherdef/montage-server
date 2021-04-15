@@ -20,25 +20,34 @@
     <nav id="menu">
         <ul class="links">
             <li>@Html.ActionLink("Home", "Index")</li>
-            <li class="selected"><a href="/Identity/Account/Login">Login</a></li>
+            
             <li>@Html.ActionLink("About", "About")</li>
             <li>@Html.ActionLink("Tutorial", "Tutorial")</li>
             <li><a href="https://app.swaggerhub.com/apis/Montage1/ServerAPI/1.0.0" target="_blank">API</a></li>
+            <li class="selected"><a href="/Identity/Account/Login">Account</a></li>
             <li>@Html.ActionLink("Contact", "Contact")</li>
         </ul>
     </nav>
-    <div class="row">
-        <p></p>
-        <p></p>
-        <p></p>
-        <p></p>
-        <p></p>
-        <div class="col-md-4">
-            <p></p>
-            <p></p>
-            <p></p>
-            <p></p>
-            <p></p>
+
+    <section class="wrapper ">
+        <div class="inner">
+
+            <div class="row">
+                <section>
+                    <div class="image fit-2">
+                        <img src="~/images/pill.png" alt="montage-logo.png" />
+
+                    </div>
+
+                </section>
+            </div>
+        </div>
+    </section>
+    <div class="row" style="width:800px; margin:0 auto;">
+ 
+        
+        <div class="col-md-4" style="font-size:18px">
+            
             <form asp-route-returnUrl="@Model.ReturnUrl" method="post">
                 <h4><br>Create a new account.</h4>
 

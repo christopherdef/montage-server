@@ -6,20 +6,30 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
+using MontageServer.Areas.Identity.Pages.Account;
 
 namespace MontageServer.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(UserManager<IdentityUser> userManager)
         {
-            _logger = logger;
+            _userManager = userManager;
+            
         }
 
         public IActionResult Index()
         {
+            if (_userManager != null)
+            {
+                ViewBag.user = _userManager.GetUserName(HttpContext.User);
+
+            }
+
+
             return View();
         }
 
@@ -34,6 +44,21 @@ namespace MontageServer.Controllers
         }
         public IActionResult Tutorial()
         {
+            return View();
+        }
+
+        public IActionResult Account()
+        {
+            if (_userManager != null)
+            {
+                ViewBag.user = _userManager.GetUserName(HttpContext.User);
+
+            }
+            return View();
+        }
+
+        public IActionResult AccountIndex()
+        {            
             return View();
         }
 

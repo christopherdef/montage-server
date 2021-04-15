@@ -19,10 +19,11 @@
     <nav id="menu">
         <ul class="links">
             <li>@Html.ActionLink("Home", "Index")</li>
-            <li class="selected"><a href="/Identity/Account/Login">Login</a></li>
+            
             <li>@Html.ActionLink("About", "About")</li>
             <li>@Html.ActionLink("Tutorial", "Tutorial")</li>
             <li><a href="https://app.swaggerhub.com/apis/Montage1/ServerAPI/1.0.0" target="_blank">API</a></li>
+            <li class="selected"><a href="/Identity/Account/Login">Account</a></li>
             <li>@Html.ActionLink("Contact", "Contact")</li>
         </ul>
     </nav>
@@ -32,19 +33,31 @@
 
 
     <h1>@ViewData["Title"]</h1>
-    <div class="row">
-        <p></p>
-        <p></p>
-        <p></p>
-        <p></p>
-        <p></p>
-        <div class="col-md-4">
+
+    <section class="wrapper ">
+        <div class="inner">
+
+            <div class="row">
+                <section>
+                    <div class="image fit-2">
+                        <img src="~/images/pill.png" alt="montage-logo.png" />
+
+                    </div>
+
+                </section>
+            </div>
+        </div>
+    </section>
+    
+
+    <div class="row" style="width:800px; margin:0 auto;">
+ 
+
+        <div class="col-md-4" style="font-size:18px">
             <section class="contact-page">
-                <p></p>
-                <p></p>
-                <p></p>
-                <p></p>
-                <p></p>
+
+
+
                 <form id="account" method="post">
 
                     <h4> <br>Use a local account to log in.</h4>
@@ -53,15 +66,15 @@
                         <label asp-for="Input.Email"></label>
                         <input asp-for="Input.Email" class="form-control" />
                         <span asp-validation-for="Input.Email" class="text-danger"></span>
-                   
+
                         <br />
-                    
+
                         <label asp-for="Input.Password"></label>
                         <input asp-for="Input.Password" class="form-control" />
                         <span asp-validation-for="Input.Password" class="text-danger"></span>
-                   
+
                         <br />
-                    
+
                         <button type="submit" class="btn btn-primary">Log in</button>
                         <br /><br />
                         <p>
@@ -73,45 +86,43 @@
                             <p></p>
                             <p></p>
                             <!--
-            <h4><br>Use another service to log in.</h4>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
-                            for details on setting up this ASP.NET application to support logging in via external services.
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
-                        </div>
-                    </form>
-                }
-            }-->
+                        <h4><br>Use another service to log in.</h4>
+                        <hr />
+                        @{
+                            if ((Model.ExternalLogins?.Count ?? 0) == 0)
+                            {
+                                <div>
+                                    <p>
+                                        There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
+                                        for details on setting up this ASP.NET application to support logging in via external services.
+                                    </p>
+                                </div>
+                            }
+                            else
+                            {
+                                <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
+                                    <div>
+                                        <p>
+                                            @foreach (var provider in Model.ExternalLogins)
+                                            {
+                                                <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
+                                            }
+                                        </p>
+                                    </div>
+                                </form>
+                            }
+                        }--> 
                         </section>
+
+                        
 
                     </div>
                 </form>
             </section>
         </div>
-        <div class="col-md-6 col-md-offset-2">
-            <section >
-                <p></p>
-                <p></p>
-                <p></p>
-                <p></p>
-                <p></p>
+        <div class="col-md-6 col-md-offset-2" style="font-size:18px">
+            <section>
+
                 <h4> <br>Register an account.</h4>
 
                 <p>
