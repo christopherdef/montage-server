@@ -125,6 +125,8 @@ namespace MontageServer
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.UseDefaultFiles();
+
             app.UseRouting();
 
             app.UseAuthentication();
