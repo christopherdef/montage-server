@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MontageServer.Areas.Identity.Pages.Account;
+using MontageServer.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace MontageServer.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return View("~/Views/AudioResponses/Index.cshtml");
         }
 
 
@@ -98,6 +99,13 @@ namespace MontageServer.Controllers
 
             }
             return View(loginUser);
+        }
+        [HttpPost]
+
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

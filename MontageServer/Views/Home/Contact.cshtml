@@ -18,9 +18,18 @@
     <!-- Nav -->
     <nav id="menu">
         <ul class="links">
-            <li >@Html.ActionLink("Index", "Index")</li>
+            <li>@Html.ActionLink("Home", "Index")</li>
+            <li>@Html.ActionLink("About", "About")</li>
+            <li>@Html.ActionLink("Tutorial", "Tutorial")</li>
             <li><a href="https://app.swaggerhub.com/apis/Montage1/ServerAPI/1.0.0" target="_blank">API</a></li>
-            <li><a href="/Identity/Account/Login">Login</a></li>
+            @if (signInManager.IsSignedIn(User))
+            {
+                <li>@Html.ActionLink("My Account", "Account")</li>
+            }
+            else
+            {
+                <li><a href="/Identity/Account/Login">Login</a></li>
+            }
             <li class="selected">@Html.ActionLink("Contact", "Contact")</li>
         </ul>
     </nav>
@@ -28,95 +37,136 @@
     <!-- Main -->
     <div id="main">
 
-        <!-- Main -->
-        <section class="wrapper style1">
+
+
+        <!-- Three -->
+        <section class="wrapper ">
             <div class="inner">
 
-                <!-- Intro -->
                 <div class="row">
                     <section>
                         <div class="image fit-2">
                             <img src="~/images/pill.png" alt="montage-logo.png" />
 
                         </div>
-                        <p class="description"><strong>Montage</strong> is lorem ipsum... </p>
+
                     </section>
-
                 </div>
+                <br />
+                <header class="align-center">
+                    <h2>Don't be shy! Questions? Comments? Jokes? Let us know what you think!</h2>
 
-                <hr class="major" />
+                    <ul class="icons">
+                        <li><a href="mailto:montageextension@gmail.com" class="icon fa-envelope"><span class="label">montageextension@gmail.com</span></a></li>
+                        <li><a href="mailto:montageextension@gmail.com">montageextension@gmail.com</a> </li>
+                    </ul>
 
-                <!-- Content -->
-                <h2 id="content">About Us</h2>
-                <h2 id="content">Contact</h2>
-                <ul class="icons">
-                    <li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
-                    <li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
-                    <li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
-                    <li><a href="#" class="icon fa-github"><span class="label">Github</span></a></li>
-                    <li><a href="#" class="icon fa-dribbble"><span class="label">Dribbble</span></a></li>
-                    <li><a href="#" class="icon fa-tumblr"><span class="label">Tumblr</span></a></li>
-                </ul>
+                    <!--
+
+                                        <form action="mailto:montageextension@gmail.com”
+                                              method="POST""
+                                              enctype="multipart/form-data"
+                                              name="EmailForm">
+
+                                            Name:<br>
+
+                                            <input type="text" size="19" name="ContactName"><br><br>
+
+                                            Message:<br> <textarea name="ContactCommentt" rows="6" cols="20">
+
+                    </textarea><br><br> <input type="submit" value="Submit">
+                                        </form>
 
 
-                <hr class="major" />
+                                    </header>
 
+                    -->
+                    <!-- 3 Column Video Section -->
+                    <div class="flex flex-2">
+                        <div class="video col">
+                            <div class="image fit">
 
-            </div>
+                                <a href="https://www.linkedin.com/in/nickolas-howell-366202139/" target="_blank"><img src="~/images/nick.jpeg" target="_blank"></a>
 
-            <!-- Footer -->
-            <footer id="footer">
-                <div class="inner">
-                    <div class="flex flex-3">
-                        <div class="col">
-                            <h3>Vestibullum</h3>
-                            <ul class="alt">
-                                <li><a href="#">Nascetur nunc varius commodo.</a></li>
-                                <li><a href="#">Vis id faucibus montes tempor</a></li>
-                                <li><a href="#">Massa amet lobortis vel.</a></li>
-                                <li><a href="#">Nascetur nunc varius commodo.</a></li>
+                            </div>
+                            <p class="caption">
+                                Nick
+                            </p>
+                            <ul class="icons">
+                                <li><a href="https://github.com/NCKLS" target="_blank" class="icon fa-github"><span class="label">Github</span></a></li>
+                                <li></li>
+                                <li></li>
+                                <li><a href="https://www.linkedin.com/in/nickolas-howell-366202139/" target="_blank" class="icon fa-linkedin"><span class="label">Instagram</span></a></li>
                             </ul>
                         </div>
-                        <div class="col">
-                            <h3>Lobortis</h3>
-                            <ul class="alt">
-                                <li><a href="#">Nascetur nunc varius commodo.</a></li>
-                                <li><a href="#">Vis id faucibus montes tempor</a></li>
-                                <li><a href="#">Massa amet lobortis vel.</a></li>
-                                <li><a href="#">Nascetur nunc varius commodo.</a></li>
+                        <div class="video col">
+                            <div class="image fit">
+                                <a href="https://www.linkedin.com/in/christopher-de-freitas-55253a177/" target="_blank"><img src="~/images/chris.jpg" target="_blank"></a>
+
+
+                            </div>
+                            <p class="caption">
+                                Chris
+                            </p>
+                            <ul class="icons">
+                                <li><a href="https://github.com/christopherdef" target="_blank" class="icon fa-github"><span class="label">Github</span></a></li>
+                                <li></li>
+                                <li></li>
+                                <li><a href="https://www.linkedin.com/in/christopher-de-freitas-55253a177/" target="_blank" class="icon fa-linkedin"><span class="label">Instagram</span></a></li>
                             </ul>
                         </div>
-                        <div class="col">
-                            <h3>Accumsan</h3>
-                            <ul class="alt">
-                                <li><a href="#">Nascetur nunc varius commodo.</a></li>
-                                <li><a href="#">Vis id faucibus montes tempor</a></li>
-                                <li><a href="#">Massa amet lobortis vel.</a></li>
-                                <li><a href="#">Nascetur nunc varius commodo.</a></li>
+
+                    </div>
+                    <div class="flex flex-2">
+                        <div class="video col">
+                            <div class="image fit">
+                                <a href="https://www.linkedin.com/in/andrewfryzel/" target="_blank"><img src="~/images/andrew.jpg" target="_blank"></a>
+
+                            </div>
+                            <p class="caption">
+                                Andrew
+                            </p>
+                            <ul class="icons">
+                                <li><a href="https://github.com/andrewfryzel" target="_blank" class="icon fa-github"><span class="label">Github</span></a></li>
+                                <li></li>
+                                <li></li>
+                                <li><a href="https://www.linkedin.com/in/andrewfryzel/" target="_blank" class="icon fa-linkedin"><span class="label">Instagram</span></a></li>
                             </ul>
+
+                        </div>
+                        <div class="video col">
+                            <div class="image fit">
+                                <!--<img src="~/images/gavin.png" alt="" /> -->
+                                <a href="https://www.linkedin.com/in/gavin-monson/" target="_blank"><img src="~/images/gavin.png" target="_blank"></a>
+
+                            </div>
+                            <p class="caption">
+                                Gavin
+                            </p>
+                            <ul class="icons">
+                                <li><a href="https://github.com/gnosnow" class="icon fa-github"><span class="label">Github</span></a></li>
+                                <li></li>
+                                <li></li>
+                                <li><a href="https://www.linkedin.com/in/gavin-monson/" target="_blank" class="icon fa-linkedin"><span class="label">Instagram</span></a></li>
+                            </ul>
+
                         </div>
                     </div>
-                </div>
-                <div class="copyright">
-                    <ul class="icons">
-                        <li><a href="#" class="icon fa-twitter"><span class="label">Twitter</span></a></li>
-                        <li><a href="#" class="icon fa-facebook"><span class="label">Facebook</span></a></li>
-                        <li><a href="#" class="icon fa-instagram"><span class="label">Instagram</span></a></li>
-                        <li><a href="#" class="icon fa-snapchat"><span class="label">Snapchat</span></a></li>
-                    </ul>
-                    &copy; Untitled. Design: <a href="https://templated.co">TEMPLATED</a>. Images: <a href="https://unsplash.com">Coverr</a>. Video: <a href="https://coverr.co">Coverr</a>.
-                </div>
-            </footer>
+            </div>
+        </section>
 
-            <!-- Scripts -->
+    </div>
 
-            <script src="../assets/js/jquery.min.js"></script>
-            <script src="../assets/js/jquery.scrolly.min.js"></script>
-            <script src="../assets/js/skel.min.js"></script>
-            <script src="../assets/js/util.js"></script>
-            <script src="../assets/js/main.js"></script>
-            <script src="../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-            <script src="../js/site.js?v=4q1jwFhaPaZgr8WAUSrux6hAuh0XDg9kPS3xIVq36I0"></script>
+
+    <!-- Scripts -->
+
+    <script src="../assets/js/jquery.min.js"></script>
+    <script src="../assets/js/jquery.scrolly.min.js"></script>
+    <script src="../assets/js/skel.min.js"></script>
+    <script src="../assets/js/util.js"></script>
+    <script src="../assets/js/main.js"></script>
+    <script src="../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/site.js?v=4q1jwFhaPaZgr8WAUSrux6hAuh0XDg9kPS3xIVq36I0"></script>
 
 </body>
 </html>

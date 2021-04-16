@@ -144,12 +144,12 @@ def get_topics(transcript):
     beta = 0.01
     niter = 50
     verbose = True
-    clean_on_del = False
+    clean_on_del = True
     btm = pyBTM.BTM(K=k, input_path=tmpf.name, alpha=alpha, beta=beta, niter=niter, verbose=verbose, clean_on_del=clean_on_del)
 
     btm.index_documents()
-    btm.learn_topics(force=False)
-    btm.infer_documents(force=False)
+    btm.learn_topics(force=True)
+    btm.infer_documents(force=True)
 
     L = 5
     topics = btm.get_topics(include_likelihood=False, use_words=True, L=L)

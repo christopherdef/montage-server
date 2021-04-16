@@ -1,12 +1,7 @@
-@charset "UTF-8";
+﻿@charset "UTF-8";
 @import url(font-awesome.min.css);
 @import url("https://fonts.googleapis.com/css?family=Signika:300,700");
 
-/*
-	Broadcast by TEMPLATED
-	templated.co @templatedco
-	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
-*/
 
 /* Reset */
 
@@ -2379,8 +2374,11 @@
 			display: block;
 		}
 
+
+
 		.image.left, .image.right {
 			max-width: 40%;
+			
 		}
 
 			.image.left img, .image.right img {
@@ -2404,6 +2402,11 @@
 			margin: 0 0 2em 0;
 			width: 100%;
 		}
+		.image.fit-fit {
+			display: block;
+			margin: 0 0 2em 0;
+			width: 100%;
+		}
 		.image.fit-2 {
 			display: block;
 			width: 50%;
@@ -2411,9 +2414,16 @@
   			margin-right: auto;
 		}
 
-			.image.fit img {
-				width: 100%;
-			}
+		.image.fit img {
+			width: 50%;
+			margin-left: auto;
+			margin-right: auto;
+			margin-top: 50px;
+		}
+		.image.fit-fit img {
+			width: 100%;
+			
+		}
 			.image.fit-2 img {
 				width: 100%;
 			}
@@ -2457,11 +2467,13 @@
 			padding-left: 0.25em;
 		}
 
-	ul {
-		list-style: disc;
-		margin: 0 0 2em 0;
-		padding-left: 1em;
-	}
+ul {
+	list-style: disc;
+	margin: 0 0 2em 0;
+	padding-left: 1em;
+	margin-left: auto;
+	margin-right: auto;
+}
 
 		ul li {
 			padding-left: 0.5em;
@@ -2486,6 +2498,9 @@
 			cursor: default;
 			list-style: none;
 			padding-left: 0;
+			margin-left: auto;
+			margin-right: auto;
+
 		}
 
 			ul.icons li {

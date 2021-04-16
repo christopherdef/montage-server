@@ -1,10 +1,19 @@
-﻿@page
+﻿
+
+@page
 @model LogoutModel
 @{
     ViewData["Title"] = "Log out";
 }
-
+@using Microsoft.AspNetCore.Identity;
+@using MontageServer.Controllers;
+@inject SignInManager<IdentityUser> signInManager;
+<p style="font-size: 20px">
+    @ViewBag.user
+</p>
 <header>
     <h1>@ViewData["Title"]</h1>
-    <p>You have successfully logged out of the application.</p>
+    <p>Logging out! Redirecting to the homepage!</p>
+
+    
 </header>
