@@ -1,5 +1,10 @@
 # Montage
 
+## **Contributors**
+Nick Howell, Chris de Freitas,
+Gavin Monson,
+Andrew Fryzel
+
 
 
 ## **Summary**  
@@ -35,7 +40,4 @@ Run the server. This can be done, for example,  by running IIS Express in Visual
 # Extension
 TODO
 
-## **Contributors**
-Nick Howell, Chris de Freitas,
-Gavin Monson,
-Andrew Fryzel
+
