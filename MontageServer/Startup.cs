@@ -67,8 +67,8 @@ namespace MontageServer
                 {
                     IConfigurationSection googleAuthNSection =
                         Configuration.GetSection("Authentication:Google");
-                    options.ClientId = googleAuthNSection["ClientId"];
-                    options.ClientSecret = googleAuthNSection["ClientSecret"];
+                    options.ClientId = "1052455296366-c94ad5uks877ie7svdf0fftr2hpvrfpr.apps.googleusercontent.com";//googleAuthNSection["ClientId"];
+                    options.ClientSecret = "Locr5siDpTB75EYNhkHkDnUF";//googleAuthNSection["ClientSecret"];
                 });
 
 
@@ -124,6 +124,8 @@ namespace MontageServer
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseDefaultFiles();
 
             app.UseRouting();
 

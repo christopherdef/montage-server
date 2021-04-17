@@ -1,9 +1,12 @@
-﻿<!DOCTYPE HTML>
+﻿@model IEnumerable<MontageServer.Models.AdobeClip>
+
+<!DOCTYPE HTML>
 
 <html>
 <head>
     <title>Montage</title>
     <link rel="stylesheet" href="assets/css/main.css" />
+    
 </head>
 <body>
 
@@ -11,6 +14,14 @@
     <header id="header">
         <h1>@Html.ActionLink("Montage", "Index")</h1>
         <a href="#menu">Menu</a>
+
+        <div class="col-md-6 col-md-offset-2" style="font-size:18px">
+            <section>
+                <form method="post" asp-action="logout" asp-controller="account">
+                    <input type="submit" value="Logout" />
+                </form>
+            </section>
+        </div>
     </header>
 
     <!-- Nav -->
@@ -47,32 +58,66 @@
         </div>
     </section>
 
+    <section class="contact-page">
+        <table>
+            <thead>
+                <tr>
+                    <th>
+                        ID
+                    </th>
+                    <th>
+                        Footage Path
+                    </th>
+                    <th>
+                        Analysis Result String
+                    </th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.ClipId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FootagePath)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AnalysisResultString)
+                        </td>
+                        <!--
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.ClipId">Edit Analysis Result</a>
 
-    <div class="row" style="width:800px; margin:0 auto;">
-        <p>
-            @ViewBag.user
-        </p>
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@item.ClipId">Analysis Result Details</a>
 
-       
-        <div class="col-md-4" style="font-size:18px">
+
+                        </td>
+                        -->
+                        <td>
+
+                            @Html.ActionLink("Delete Clip", "Delete", new { clipID = item.ClipId })
+
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+    <div class="row" style="width:1000px; margin:0 auto;">
+
+
+        <div class="col-md-1" style="font-size:18px">
             <section class="contact-page">
-
-                @Html.ActionLink("Transcripts and Stuff, clicking this breaks everything when running locally", "AccountIndex")
-
-
             </section>
         </div>
-        <div class="col-md-6 col-md-offset-2" style="font-size:18px">
-            <section>
-                <div>
 
-                    <form method="post" asp-action="logout" asp-controller="account">
-                        <input type="submit" value="Logout" />
-                    </form>
-                </div>
-            </section>
-        </div>
     </div>
+
 
     @section Scripts {
         <partial name="_ValidationScriptsPartial" />
