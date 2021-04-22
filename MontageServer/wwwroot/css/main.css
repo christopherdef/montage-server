@@ -3321,6 +3321,18 @@ table {
         text-align: center;
     }
 
+    .video .student-bio {
+        font-size: 20px;
+        font-weight: 600;
+        margin: auto;
+        text-align: justify;
+        text-justify: inter-word;
+        margin-top: 50px;
+        margin-bottom: 50px;
+        margin-right: 80px;
+        margin-left: 80px;
+    }
+
     .video .description {
         color: #c0c5c9;
         padding-top: 0px;
