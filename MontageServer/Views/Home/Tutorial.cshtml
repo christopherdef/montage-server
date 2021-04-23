@@ -22,6 +22,8 @@
             <li>@Html.ActionLink("About", "About")</li>
             <li class="selected">@Html.ActionLink("Tutorial", "Tutorial")</li>
             <li><a href="https://app.swaggerhub.com/apis/Montage1/ServerAPI/1.0.0" target="_blank">API</a></li>
+            <li><a href="https://github.com/andrewfryzel/MontageExtension" target="_blank">Download</a></li>
+
             @if (signInManager.IsSignedIn(User))
             {
                 <li>@Html.ActionLink("My Account", "Account")</li>
