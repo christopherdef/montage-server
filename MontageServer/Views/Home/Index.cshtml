@@ -6,12 +6,26 @@
     <link rel="stylesheet" href="assets/css/main.css" />
 </head>
 <body>
+    @if (signInManager.IsSignedIn(User))
+    {
+        <!-- Header -->
+        <header id="header">
+            <h1>@Html.ActionLink("Montage", "Index")</h1>
+            <a href="Home/Account">@User.Identity.Name</a>
+            <a href="#menu">Menu</a>
+        </header>
 
-    <!-- Header -->
-    <header id="header">
-        <h1>@Html.ActionLink("Montage", "Index")</h1>
-        <a href="#menu">Menu</a>
-    </header>
+
+    }
+    else
+    {
+        <!-- Header -->
+        <header id="header">
+            <h1>@Html.ActionLink("Montage", "Index")</h1>
+            <a href="#menu">Menu</a>
+        </header>
+    }
+
 
     <!-- Nav -->
     <nav id="menu">
@@ -19,7 +33,6 @@
             <li class="selected">@Html.ActionLink("Home", "Index")</li>
             <li>@Html.ActionLink("About", "About")</li>
             <li>@Html.ActionLink("Tutorial", "Tutorial")</li>
-            <li><a href="https://app.swaggerhub.com/apis/Montage1/ServerAPI/1.0.0" target="_blank">API</a></li>
             <li><a href="https://github.com/andrewfryzel/MontageExtension" target="_blank">Download</a></li>
 
             @if (signInManager.IsSignedIn(User))
@@ -27,12 +40,14 @@
                 <li>
                     @Html.ActionLink("My Account", "Account")
                 </li>
-            }
 
+
+            }
             else
             {
                 <li><a href="/Identity/Account/Login">Login</a></li>
             }
+
 
             <li>@Html.ActionLink("Contact", "Contact")</li>
         </ul>
@@ -106,8 +121,6 @@
                 </div>
                 <div style="text-align:center">
                     <a href="/Home/About" class="button2 big alt">About</a>
-                    <a href="https://github.com/andrewfryzel/MontageExtension" target="_blank" class="button2 big alt">Download</a>
-
                 </div>
             </div>
         </section>
