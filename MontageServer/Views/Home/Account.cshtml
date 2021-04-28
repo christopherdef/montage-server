@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MontageServer.Models.DisplayAccountInfo>
+﻿@model IEnumerable<MontageServer.Models.AdobeClip>
 
 <!DOCTYPE HTML>
 
@@ -9,42 +9,21 @@
     
 </head>
 <body>
-    @if (signInManager.IsSignedIn(User))
-    {
-        <!-- Header -->
-        <header id="header">
-            <h1>@Html.ActionLink("Montage", "Index")</h1>
-            <a href="Account">@User.Identity.Name</a>
-            <a href="#menu">Menu</a>
-
-            <div class="col-md-6 col-md-offset-2" style="font-size:18px">
-                <section>
-                    <form method="post" asp-action="logout" asp-controller="account">
-                        <input type="submit" value="Logout" />
-                    </form>
-                </section>
-            </div>
-        </header>
-
-    }
-    else
-    {
-        <!-- Header -->
-        <header id="header">
-            <h1>@Html.ActionLink("Montage", "Index")</h1>
-            <a href="#menu">Menu</a>
-
-            <div class="col-md-6 col-md-offset-2" style="font-size:18px">
-                <section>
-                    <form method="post" asp-action="logout" asp-controller="account">
-                        <input type="submit" value="Logout" />
-                    </form>
-                </section>
-            </div>
-        </header>
-    }
 
     <!-- Header -->
+    <header id="header">
+        <h1>@Html.ActionLink("Montage", "Index")</h1>
+        <a href="#menu">Menu</a>
+
+        <div class="col-md-6 col-md-offset-2" style="font-size:18px">
+            <section>
+                <form method="post" asp-action="logout" asp-controller="account">
+                    <input type="submit" value="Logout" />
+                </form>
+            </section>
+        </div>
+    </header>
+
     <!-- Nav -->
     <nav id="menu">
         <ul class="links">
@@ -52,7 +31,9 @@
 
             <li>@Html.ActionLink("About", "About")</li>
             <li>@Html.ActionLink("Tutorial", "Tutorial")</li>
+            <li><a href="https://app.swaggerhub.com/apis/Montage1/ServerAPI/1.0.0" target="_blank">API</a></li>
             <li><a href="https://github.com/andrewfryzel/MontageExtension" target="_blank">Download</a></li>
+
             <li class="selected"><a href="/Identity/Account/Login">Account</a></li>
             <li>@Html.ActionLink("Contact", "Contact")</li>
         </ul>
@@ -90,7 +71,7 @@
                         Footage Path
                     </th>
                     <th>
-                        Transcripts And Topics
+                        Analysis Result String
                     </th>
                     <th></th>
                 </tr>
@@ -105,8 +86,8 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.FootagePath)
                         </td>
-                        <td style="white-space: pre-line">
-                            @Html.DisplayFor(modelItem => item.displayClipInformation)
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AnalysisResultString)
                         </td>
                         <!--
                         <td>

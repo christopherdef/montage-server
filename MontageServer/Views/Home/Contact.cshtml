@@ -10,23 +10,10 @@
 </head>
 <body class="subpage">
 
-    @if (signInManager.IsSignedIn(User))
-    {
-        <!-- Header -->
-        <header id="header">
-            <h1>@Html.ActionLink("Montage", "Index")</h1>
-            <a href="Account">@User.Identity.Name</a>
-            <a href="#menu">Menu</a>
-        </header>
-    }
-    else
-    {
-        <!-- Header -->
-        <header id="header">
-            <h1>@Html.ActionLink("Montage", "Index")</h1>
-            <a href="#menu">Menu</a>
-        </header>
-    }
+    <header id="header">
+        <h1>@Html.ActionLink("Montage", "Index")</h1>
+        <a href="#menu">Menu</a>
+    </header>
 
     <!-- Nav -->
     <nav id="menu">
@@ -34,7 +21,9 @@
             <li>@Html.ActionLink("Home", "Index")</li>
             <li>@Html.ActionLink("About", "About")</li>
             <li>@Html.ActionLink("Tutorial", "Tutorial")</li>
+            <li><a href="https://app.swaggerhub.com/apis/Montage1/ServerAPI/1.0.0" target="_blank">API</a></li>
             <li><a href="https://github.com/andrewfryzel/MontageExtension" target="_blank">Download</a></li>
+
             @if (signInManager.IsSignedIn(User))
             {
                 <li>@Html.ActionLink("My Account", "Account")</li>
@@ -105,11 +94,13 @@
                             <p class="caption">
                                 Nick
                             </p>
-                            <ul class="icons">
-                                <li><a href="https://github.com/NCKLS" target="_blank" class="icon fa-github"><span class="label">Github</span></a></li>
+                            <p class="student-bio" > I'm currently studying at the University of Utah working towards receiving my Bachelor's in Computer Science. When I’m not programming, you can find me at my desk creating motion graphics. I've spent the last four years of my life programming Motion Graphic Templates for sale on Adobe Stock using Adobe After Effects and Javascript. My main goal has been to provide a product with a great and intuitive user interface as well as a strong functionality. I'm always looking for interesting ways to combine data and UI in order to convey the most information to the user as possible. My passion is displaying information in an easily digestible and efficient manner primarily using HTML/CSS and Javascript. I've taken interest in using d3 to generate UI elements as needed according to ordered datasets to make interfaces that are not only digestible but also flexible and scalable. I'm currently planning to work for Motorola after graduation as a Software Engineer, and I am hoping to move closer towards their UI/UX research team later in my career.</p>
+
+                            <ul class="icons" style="margin-top: 120px;">
+                                <li><a href="https://github.com/NCKLS" target="_blank" class="icon fa-github-alt"></a></li>
                                 <li></li>
                                 <li></li>
-                                <li><a href="https://www.linkedin.com/in/nickolas-howell-366202139/" target="_blank" class="icon fa-linkedin"><span class="label">Instagram</span></a></li>
+                                <li><a href="https://www.linkedin.com/in/nickolas-howell-366202139/" target="_blank" class="icon fa-linkedin"></a></li>
                             </ul>
                         </div>
                         <div class="video col">
@@ -121,11 +112,12 @@
                             <p class="caption">
                                 Chris
                             </p>
+                            <p class="student-bio"> I’m a senior in the University of Utah’s School of Computing pursuing a Computer Science degree. My studies are primarily focused on data analysis, machine learning, and NLP, though I’ve also worked extensively with networking and automation. I’ve worked as a research assistant for Dr. Kogan for two years now, and have found myself drawn to research more generally. My current project on political discourse during the 2014 Ukrainian revolution has had me analyzing over 90 million tweets, and required the development of sophisticated analysis pipelines for various NLP tasks, including topic modeling, sentiment analysis, and word embedding. Those findings will be published in the U’s Undergraduate Research Journal in June 2021. This coming Fall I’ll begin my Master’s degree at the U, which I’ll use to further my knowledge of NLP, social computing, crisis informatics, and disinformation studies. Since my first analysis course, research areas such as algorithmic fairness, explainability, and data science ethics have been extremely interesting to me. To that end, I’m extremely dedicated to furthering both my technical aptitude and intelligibility in data analysis and machine learning.</p>
                             <ul class="icons">
-                                <li><a href="https://github.com/christopherdef" target="_blank" class="icon fa-github"><span class="label">Github</span></a></li>
+                                <li><a href="https://github.com/christopherdef" target="_blank" class="icon fa-github-alt"></a></li>
                                 <li></li>
                                 <li></li>
-                                <li><a href="https://www.linkedin.com/in/christopher-de-freitas-55253a177/" target="_blank" class="icon fa-linkedin"><span class="label">Instagram</span></a></li>
+                                <li><a href="https://www.linkedin.com/in/christopher-de-freitas-55253a177/" target="_blank" class="icon fa-linkedin"></a></li>
                             </ul>
                         </div>
 
@@ -139,11 +131,19 @@
                             <p class="caption">
                                 Andrew
                             </p>
-                            <ul class="icons">
-                                <li><a href="https://github.com/andrewfryzel" target="_blank" class="icon fa-github"><span class="label">Github</span></a></li>
+                            <p class="student-bio" >
+                                I'm currently a student at the University of Utah pursuing a Bachelor's Degree in Computer Science. I am seeking opportunities to work in the industry in order to gain valuable industry experience and to learn new skills.
+
+                                As an intern at Amazon, I designed, implemented, and tested projects that had companywide impact. I used AWS cloud tools to build services with a variety of languages including SQL, Java, Kotlin, JavaScript, and Python. At Proofpoint, I create and test services, as part of a data loss prevention team, that monitor and secure sensitive user data.
+
+                                As a student, I have competed in various coding challenges, hack-a-thons, and robotics competitions using a variety of coding languages and tools. In my spare time I have worked on projects ranging from phone apps to games to software programs. I enjoy working hard and the feeling that solving a difficult problem brings. I'm passionate about Computer Science and look forward to meeting new people, learning new things and creating dynamic projects that can make a real difference.
+                            </p>
+
+                            <ul class="icons" style="margin-top: 120px;">
+                                <li><a href="https://github.com/andrewfryzel" target="_blank" class="icon fa-github-alt"></a></li>
                                 <li></li>
                                 <li></li>
-                                <li><a href="https://www.linkedin.com/in/andrewfryzel/" target="_blank" class="icon fa-linkedin"><span class="label">Instagram</span></a></li>
+                                <li><a href="https://www.linkedin.com/in/andrewfryzel/" target="_blank" class="icon fa-linkedin"></a></li>
                             </ul>
 
                         </div>
@@ -156,11 +156,13 @@
                             <p class="caption">
                                 Gavin
                             </p>
+
+                            <p class="student-bio"> I am currently pursuing a degree in Computer Science, and a degree in Film and Media Arts. I will be graduating this semester with plans of working at Goldman Sachs full time after graduation. My main interests lie with optimizing solutions to handle large amounts of data, working on the backend, and creating awesome internal tools that make everyone’s lives easier. Over my college career, I have learned everything from proper software development practices, to low level machine code. Overall, my goal throughout college was to become a well-rounded developer that can solve challenging problems. Throughout my working career I have worked everywhere from an IT helpdesk technician, to a full-time backend engineer at Porch Software, and Goldman Sachs. I currently work at a small startup company called Porch Software, working on the backend to automate life insurance applications. At Goldman Sachs I will also be working on the backend in the CIMD department, in the tax division, handling large amounts of client tax information safely and securely so that we can use to automate tax document generation.</p>
                             <ul class="icons">
-                                <li><a href="https://github.com/gnosnow" class="icon fa-github"><span class="label">Github</span></a></li>
+                                <li><a href="https://github.com/gnosnow" class="icon fa-github-alt"></a></li>
                                 <li></li>
                                 <li></li>
-                                <li><a href="https://www.linkedin.com/in/gavin-monson/" target="_blank" class="icon fa-linkedin"><span class="label">Instagram</span></a></li>
+                                <li><a href="https://www.linkedin.com/in/gavin-monson/" target="_blank" class="icon fa-linkedin"></a></li>
                             </ul>
 
                         </div>
