@@ -28,7 +28,7 @@ namespace MontageServer.Controllers
 
         public IActionResult Index()
         {
-            return View("~/Views/AudioResponses/Index.cshtml");
+            return View("~/Views/Home/Account.cshtml");
         }
 
 

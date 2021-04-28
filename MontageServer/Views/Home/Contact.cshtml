@@ -10,10 +10,24 @@
 </head>
 <body class="subpage">
 
-    <header id="header">
-        <h1>@Html.ActionLink("Montage", "Index")</h1>
-        <a href="#menu">Menu</a>
-    </header>
+    @if (signInManager.IsSignedIn(User))
+    {
+        <!-- Header -->
+        <header id="header">
+            <h1>@Html.ActionLink("Montage", "Index")</h1>
+            <a href="Account">@User.Identity.Name</a>
+            <a href="#menu">Menu</a>
+        </header>
+    }
+    else
+    {
+        <!-- Header -->
+        <header id="header">
+            <h1>@Html.ActionLink("Montage", "Index")</h1>
+            <a href="#menu">Menu</a>
+        </header>
+    }
+
 
     <!-- Nav -->
     <nav id="menu">
@@ -94,7 +108,7 @@
                             <p class="caption">
                                 Nick
                             </p>
-                            <p class="student-bio" > I'm currently studying at the University of Utah working towards receiving my Bachelor's in Computer Science. When I’m not programming, you can find me at my desk creating motion graphics. I've spent the last four years of my life programming Motion Graphic Templates for sale on Adobe Stock using Adobe After Effects and Javascript. My main goal has been to provide a product with a great and intuitive user interface as well as a strong functionality. I'm always looking for interesting ways to combine data and UI in order to convey the most information to the user as possible. My passion is displaying information in an easily digestible and efficient manner primarily using HTML/CSS and Javascript. I've taken interest in using d3 to generate UI elements as needed according to ordered datasets to make interfaces that are not only digestible but also flexible and scalable. I'm currently planning to work for Motorola after graduation as a Software Engineer, and I am hoping to move closer towards their UI/UX research team later in my career.</p>
+                            <p class="student-bio"> I'm currently studying at the University of Utah working towards receiving my Bachelor's in Computer Science. When I’m not programming, you can find me at my desk creating motion graphics. I've spent the last four years of my life programming Motion Graphic Templates for sale on Adobe Stock using Adobe After Effects and Javascript. My main goal has been to provide a product with a great and intuitive user interface as well as a strong functionality. I'm always looking for interesting ways to combine data and UI in order to convey the most information to the user as possible. My passion is displaying information in an easily digestible and efficient manner primarily using HTML/CSS and Javascript. I've taken interest in using d3 to generate UI elements as needed according to ordered datasets to make interfaces that are not only digestible but also flexible and scalable. I'm currently planning to work for Motorola after graduation as a Software Engineer, and I am hoping to move closer towards their UI/UX research team later in my career.</p>
 
                             <ul class="icons" style="margin-top: 120px;">
                                 <li><a href="https://github.com/NCKLS" target="_blank" class="icon fa-github-alt"></a></li>
@@ -131,7 +145,7 @@
                             <p class="caption">
                                 Andrew
                             </p>
-                            <p class="student-bio" >
+                            <p class="student-bio">
                                 I'm currently a student at the University of Utah pursuing a Bachelor's Degree in Computer Science. I am seeking opportunities to work in the industry in order to gain valuable industry experience and to learn new skills.
 
                                 As an intern at Amazon, I designed, implemented, and tested projects that had companywide impact. I used AWS cloud tools to build services with a variety of languages including SQL, Java, Kotlin, JavaScript, and Python. At Proofpoint, I create and test services, as part of a data loss prevention team, that monitor and secure sensitive user data.

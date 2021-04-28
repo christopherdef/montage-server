@@ -8,10 +8,24 @@
 <body>
 
     <!-- Header -->
-    <header id="header">
-        <h1>@Html.ActionLink("Montage", "Index")</h1>
-        <a href="#menu">Menu</a>
-    </header>
+    @if (signInManager.IsSignedIn(User))
+    {
+        <!-- Header -->
+        <header id="header">
+            <h1>@Html.ActionLink("Montage", "Index")</h1>
+            <a href="/Home/Account">@User.Identity.Name</a>
+            <a href="#menu">Menu</a>
+        </header>
+    }
+    else
+    {
+        <!-- Header -->
+        <header id="header">
+            <h1>@Html.ActionLink("Montage", "Index")</h1>
+            <a href="#menu">Menu</a>
+        </header>
+    }
+
 
     <!-- Nav -->
     <nav id="menu">

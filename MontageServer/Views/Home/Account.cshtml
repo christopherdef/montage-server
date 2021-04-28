@@ -1,4 +1,4 @@
-﻿@model IEnumerable<MontageServer.Models.AdobeClip>
+﻿@model IEnumerable<MontageServer.Models.DisplayAccountInfo>
 
 <!DOCTYPE HTML>
 
@@ -11,18 +11,41 @@
 <body>
 
     <!-- Header -->
-    <header id="header">
-        <h1>@Html.ActionLink("Montage", "Index")</h1>
-        <a href="#menu">Menu</a>
+    @if (signInManager.IsSignedIn(User))
+    {
+        <!-- Header -->
+        <header id="header">
+            <h1>@Html.ActionLink("Montage", "Index")</h1>
+            <a href="Account">@User.Identity.Name</a>
+            <a href="#menu">Menu</a>
 
-        <div class="col-md-6 col-md-offset-2" style="font-size:18px">
-            <section>
-                <form method="post" asp-action="logout" asp-controller="account">
-                    <input type="submit" value="Logout" />
-                </form>
-            </section>
-        </div>
-    </header>
+            <div class="col-md-6 col-md-offset-2" style="font-size:18px">
+                <section>
+                    <form method="post" asp-action="logout" asp-controller="account">
+                        <input type="submit" value="Logout" />
+                    </form>
+                </section>
+            </div>
+        </header>
+
+    }
+    else
+    {
+        <!-- Header -->
+        <header id="header">
+            <h1>@Html.ActionLink("Montage", "Index")</h1>
+            <a href="#menu">Menu</a>
+
+            <div class="col-md-6 col-md-offset-2" style="font-size:18px">
+                <section>
+                    <form method="post" asp-action="logout" asp-controller="account">
+                        <input type="submit" value="Logout" />
+                    </form>
+                </section>
+            </div>
+        </header>
+    }
+
 
     <!-- Nav -->
     <nav id="menu">
@@ -71,7 +94,7 @@
                         Footage Path
                     </th>
                     <th>
-                        Analysis Result String
+                        Transcripts And Topics
                     </th>
                     <th></th>
                 </tr>
@@ -87,7 +110,7 @@
                             @Html.DisplayFor(modelItem => item.FootagePath)
                         </td>
                         <td>
-                            @Html.DisplayFor(modelItem => item.AnalysisResultString)
+                            @Html.DisplayFor(modelItem => item.displayClipInformation)
                         </td>
                         <!--
                         <td>

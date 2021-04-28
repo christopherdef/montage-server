@@ -10,10 +10,24 @@
 </head>
 <body class="subpage">
 
-    <header id="header">
-        <h1>@Html.ActionLink("Montage", "Index")</h1>
-        <a href="#menu">Menu</a>
-    </header>
+    @if (signInManager.IsSignedIn(User))
+    {
+        <!-- Header -->
+        <header id="header">
+            <h1>@Html.ActionLink("Montage", "Index")</h1>
+            <a href="Account">@User.Identity.Name</a>
+            <a href="#menu">Menu</a>
+        </header>
+    }
+    else
+    {
+        <!-- Header -->
+        <header id="header">
+            <h1>@Html.ActionLink("Montage", "Index")</h1>
+            <a href="#menu">Menu</a>
+        </header>
+    }
+
 
     <!-- Nav -->
     <nav id="menu">
@@ -43,10 +57,10 @@
         <section class="wrapper style1">
             <div class="inner">
                 <!--
-    <header class="align-center">
-        <h2>Montage</h2>
-    </header>
-            -->
+                <header class="align-center">
+                    <h2>Montage</h2>
+                </header>
+                        -->
                 <header class="align-center">
                     <h2>
                         Search, Edit, Redefine
@@ -55,20 +69,20 @@
 
                 <p>
                     <span class="image left"><img src="~/images/NoPremiere.PNG" alt="" /></span><div style="font-size:20px">Adobe Premiere Pro offers basic tools to cut, combine, and edit footage. However, many of the methods are archaic and rely on watching and rewatching hours of footage over and over and over. Although practical, Premiere Pro's default set of tools are slow, dated, and uninspiring.</div>
-</p>
+                </p>
                 <br /><br /><br /><br /><br /><hr /><br />
                 <p>
                     <span class="image right"><img src="~/images/Storyboard.PNG" alt="" /></span><div style="font-size:20px">The Montage Storyboard transcribes clips allowing users to immediately tell exactly what is in each clip. By clicking "Send Audio Tracks to Server" in the Storyboard, clips in the timeline are transcribed and displayed in individual bubbles. These transcription bubbles can be moved in the Storyboard and those changes are reflected in the timeline. If a transcription is inaccurate, users can right click a bubble to change the text to be more accurate, or to create a summary of the contents.</div>
-</p>
+                </p>
                 <br /><br /><br /><br /><br /><br /><br />
                 <!-- <p>
-        <span class="image right"><img src="~/images/Drag_and_Drop.PNG" alt="" /></span>
-    </p>
-    Bubbles being moved.-->
+                    <span class="image right"><img src="~/images/Drag_and_Drop.PNG" alt="" /></span>
+                </p>
+                Bubbles being moved.-->
                 <hr /><br />
                 <p>
                     <span class="image left"><img src="~/images/Find_footage.PNG" alt="" /></span><div style="font-size:20px">The Montage Spotlight provides powerful Machine Learning powered search functionality, and additional tools to save users time and frustration. Users can search for words, objects, and topics to find the exact clip they need. When a clip is found, users can directly move the clip from the Spotlight to the timeline.</div>
-</p>
+                </p>
                 <br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
                 <div style="text-align:center">
                     <a href="https://app.swaggerhub.com/apis/Montage1/ServerAPI/1.0.0" target="_blank" class="button2 big alt">API</a>

@@ -59,8 +59,24 @@ namespace MontageServer.Controllers
 
             }
 
+            var returnList = new List<DisplayAccountInfo>();
             var currentUserId = _userManager.GetUserId(HttpContext.User);
-            return View(_montageContext.AdobeClips.Where(y => _montageContext.ClipAssignments.Where(x => x.UserId == currentUserId).Any(z => z.ClipId == y.ClipId)).ToList());
+            foreach (var item in _montageContext.AdobeClips.Where(y => _montageContext.ClipAssignments.Where(x => x.UserId == currentUserId).Any(z => z.ClipId == y.ClipId)).ToList())
+            {
+                var analysisResult = AnalysisResult.DeserializeResponse(item.AnalysisResultString);
+
+                var topicsString = "";
+                foreach (var topic in analysisResult.Topics)
+                {
+                    string addString = topic.Value.ToString();
+
+                    topicsString += "Popularity " + topic.Key + ": " + string.Join(", ", topic.Value.ToArray()) + "\n"; //addTopic.Add(new DisplayTopics() { match = topic.Key, topics = string.Join(",", topic.Value.ToArray()) });
+                }
+
+                returnList.Add(new DisplayAccountInfo() { ClipId = item.ClipId, FootagePath = item.FootagePath, displayClipInformation = new DisplayClipInformation() { Transcript = analysisResult.Transcript, Topics = topicsString } });
+            }
+            return View(returnList);
+
         }
 
 
