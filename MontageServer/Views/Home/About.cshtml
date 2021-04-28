@@ -22,6 +22,8 @@
             <li class="selected">@Html.ActionLink("About", "About")</li>
             <li>@Html.ActionLink("Tutorial", "Tutorial")</li>
             <li><a href="https://app.swaggerhub.com/apis/Montage1/ServerAPI/1.0.0" target="_blank">API</a></li>
+            <li><a href="https://github.com/andrewfryzel/MontageExtension" target="_blank">Download</a></li>
+
             @if (signInManager.IsSignedIn(User))
             {
                 <li>@Html.ActionLink("My Account", "Account")</li>
@@ -86,7 +88,6 @@
     <script src="../assets/js/util.js"></script>
     <script src="../assets/js/main.js"></script>
     <script src="../lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../js/site.js?v=4q1jwFhaPaZgr8WAUSrux6hAuh0XDg9kPS3xIVq36I0"></script>
 
 </body>
 </html>
